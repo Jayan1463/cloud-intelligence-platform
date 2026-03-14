@@ -88,7 +88,7 @@ async function startCollector() {
 
     await collectMetrics();
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 30000));
 
   }
 
