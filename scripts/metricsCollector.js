@@ -1,6 +1,6 @@
-import si from "systeminformation";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+const si = require("systeminformation");
+const { initializeApp } = require("firebase/app");
+const { getFirestore, collection, addDoc } = require("firebase/firestore");
 
 const firebaseConfig = {
   apiKey: "AIzaSyBt4dmjsZifOgkI6e-uXzKa6w88Yd5kQmE",
@@ -34,8 +34,7 @@ async function collectMetrics() {
     network: networkTraffic,
     timestamp: new Date()
   });
+
 }
 
-setInterval(collectMetrics, 5000);
-
-console.log("Live metrics collector running...");
+collectMetrics();
