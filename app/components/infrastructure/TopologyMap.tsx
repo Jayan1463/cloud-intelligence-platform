@@ -1,17 +1,27 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Line, Sphere } from "@react-three/drei";
-import { useRef } from "react";
+import { OrbitControls, Line, Sphere, Html } from "@react-three/drei";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+
+type Vec3 = [number, number, number];
+
+type Server = {
+  id: string;
+  name: string;
+  pos: Vec3;
+  cpu: number;
+};
 
 /* -----------------------------
 SERVER NODE
 ----------------------------- */
 
-function ServerNode({ position, cpu }: any) {
+function ServerNode({ position, cpu }: { position: Vec3; cpu: number }) {
 
-  const ref = useRef<any>(null);
+  const ref = useRef<THREE.Mesh | null>(null);
+  const [hovered, setHovered] = useState(false);
 
   let color = "#22c55e";
 
@@ -30,7 +40,13 @@ function ServerNode({ position, cpu }: any) {
   });
 
   return (
-    <Sphere ref={ref} args={[0.35, 32, 32]} position={position}>
+    <Sphere
+      ref={ref}
+      args={[0.35, 32, 32]}
+      position={position}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
       <meshStandardMaterial
         color={color}
         emissive={color}
@@ -38,6 +54,13 @@ function ServerNode({ position, cpu }: any) {
         metalness={0.3}
         roughness={0.2}
       />
+      {hovered && (
+        <Html distanceFactor={8} position={[0, 0.65, 0]}>
+          <div className="px-2 py-1 text-xs rounded bg-black/80 text-white border border-white/20 whitespace-nowrap">
+            CPU: {Math.round(cpu)}%
+          </div>
+        </Html>
+      )}
     </Sphere>
   );
 }
@@ -46,7 +69,7 @@ function ServerNode({ position, cpu }: any) {
 CONNECTION
 ----------------------------- */
 
-function Connection({ start, end }: any) {
+function Connection({ start, end }: { start: Vec3; end: Vec3 }) {
 
   return (
     <Line
@@ -63,10 +86,14 @@ function Connection({ start, end }: any) {
 DATA PACKET
 ----------------------------- */
 
-function DataPacket({ start, end, speed }: any) {
+function DataPacket({ start, end, speed }: { start: Vec3; end: Vec3; speed: number }) {
 
-  const ref = useRef<any>(null);
-  const progress = useRef(Math.random());
+  const ref = useRef<THREE.Mesh | null>(null);
+  const progress = useRef(0);
+
+  useEffect(() => {
+    progress.current = Math.random();
+  }, []);
 
   useFrame(() => {
 
@@ -102,21 +129,21 @@ function DataPacket({ start, end, speed }: any) {
 MAIN TOPOLOGY
 ----------------------------- */
 
-export default function TopologyMap({ metrics = [] }: any) {
+export default function TopologyMap({ metrics = [] }: { metrics?: Array<{ cpu?: number }> }) {
 
   const cpu = metrics?.[metrics.length - 1]?.cpu ?? 20;
 
-  const servers = [
-    { pos: [-4, 0, 0], cpu },
-    { pos: [-2, 1.5, 0], cpu: cpu * 0.8 },
-    { pos: [0, 0, 0], cpu },
-    { pos: [2, 1.5, 0], cpu: cpu * 0.6 },
-    { pos: [4, 0, 0], cpu: cpu * 0.7 },
-    { pos: [-1, -2, 0], cpu: cpu * 0.9 },
-    { pos: [1, -2, 0], cpu: cpu * 0.5 }
+  const servers: Server[] = [
+    { id: "edge-gw", name: "Edge Gateway", pos: [-4, 0, 0], cpu },
+    { id: "auth", name: "Auth Service", pos: [-2, 1.5, 0], cpu: cpu * 0.8 },
+    { id: "core", name: "Core API", pos: [0, 0, 0], cpu },
+    { id: "worker", name: "Worker Queue", pos: [2, 1.5, 0], cpu: cpu * 0.6 },
+    { id: "storage", name: "Storage", pos: [4, 0, 0], cpu: cpu * 0.7 },
+    { id: "db-primary", name: "DB Primary", pos: [-1, -2, 0], cpu: cpu * 0.9 },
+    { id: "cache", name: "Cache", pos: [1, -2, 0], cpu: cpu * 0.5 }
   ];
 
-  const connections = [
+  const connections: [Vec3, Vec3][] = [
     [servers[0].pos, servers[1].pos],
     [servers[1].pos, servers[2].pos],
     [servers[2].pos, servers[3].pos],
@@ -171,6 +198,21 @@ export default function TopologyMap({ metrics = [] }: any) {
 
         </Canvas>
 
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-[var(--text-muted)]">
+        {servers.map((server) => (
+          <div
+            key={server.id}
+            className="flex items-center justify-between rounded-md border border-[var(--border)] px-3 py-2"
+          >
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
+              <span className="text-[var(--text)]">{server.name}</span>
+            </div>
+            <span>{Math.round(server.cpu)}% CPU</span>
+          </div>
+        ))}
       </div>
 
     </div>
