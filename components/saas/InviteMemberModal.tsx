@@ -5,13 +5,23 @@ import { useState } from "react";
 export default function InviteMemberModal() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("member");
+  const [status, setStatus] = useState<string>("");
 
   async function onInvite() {
-    await fetch("/api/organizations/demo-org/invites", {
+    setStatus("Sending invite...");
+    const response = await fetch("/api/organizations/demo-org/invites", {
       method: "POST",
       headers: { "Content-Type": "application/json", authorization: "Bearer demo-user", "x-org-id": "demo-org", "x-role": "admin" },
       body: JSON.stringify({ email, role })
     });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      setStatus(payload.error ?? "Failed to send invite");
+      return;
+    }
+
+    setStatus(`Invite sent to ${email}`);
     setEmail("");
   }
 
@@ -38,6 +48,7 @@ export default function InviteMemberModal() {
           Send Invite
         </button>
       </div>
+      {status ? <p className="mt-3 text-xs text-[var(--text-muted)]">{status}</p> : null}
     </div>
   );
 }
