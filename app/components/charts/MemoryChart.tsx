@@ -16,12 +16,16 @@ type Metric = {
 
 export default function MemoryChart({ data }: { data: Metric[] }) {
 
+  // show last 30 metrics only
   const recentData = data.slice(-30);
 
   const chartData = recentData.map((m, i) => ({
     time: i + 1,
     memory: m.memory ?? 0
   }));
+
+  // detect spike
+  const memorySpike = recentData.some(m => (m.memory ?? 0) > 90);
 
   return (
 
@@ -35,7 +39,11 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid stroke="#27272a" vertical={false} />
+          <CartesianGrid
+            stroke="#27272a"
+            strokeDasharray="3 3"
+            vertical={false}
+          />
 
           <XAxis
             dataKey="time"
@@ -61,11 +69,17 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
           <Line
             type="natural"
             dataKey="memory"
-            stroke="#22c55e"
+            stroke={memorySpike ? "#ef4444" : "#22c55e"}
             strokeWidth={3}
             dot={false}
             activeDot={{ r: 6 }}
             isAnimationActive={true}
+            animationDuration={700}
+            style={{
+              filter: memorySpike
+                ? "drop-shadow(0px 0px 10px #ef4444)"
+                : "drop-shadow(0px 0px 8px #22c55e)"
+            }}
           />
 
         </LineChart>

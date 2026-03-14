@@ -1,79 +1,84 @@
 "use client";
 
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid
+LineChart,
+Line,
+XAxis,
+YAxis,
+Tooltip,
+ResponsiveContainer,
+CartesianGrid
 } from "recharts";
 
 type Metric = {
-  cpu?: number;
+cpu?: number;
 };
 
 export default function CPUChart({ data }: { data: Metric[] }) {
 
-  // show only last 30 metrics
-  const recentData = data.slice(-30);
+const recent = data.slice(-30);
 
-  const chartData = recentData.map((m, i) => ({
-    time: i + 1,
-    cpu: m.cpu ?? 0
-  }));
+const chartData = recent.map((m,i)=>({
+time:i+1,
+cpu:m.cpu ?? 0
+}));
 
-  return (
+const highCPU = recent.some(m => (m.cpu ?? 0) > 85);
 
-    <div className="bg-zinc-900 border border-zinc-700 p-6 rounded-xl">
+return (
 
-      <h2 className="text-xl font-semibold mb-4">
-        CPU Usage
-      </h2>
+<div className="bg-zinc-900 border border-zinc-700 p-6 rounded-xl">
 
-      <ResponsiveContainer width="100%" height={260}>
+<h2 className="text-xl font-semibold mb-4">
+CPU Usage
+</h2>
 
-        <LineChart data={chartData}>
+<ResponsiveContainer width="100%" height={260}>
 
-          <CartesianGrid stroke="#27272a" vertical={false} />
+<LineChart data={chartData}>
 
-          <XAxis
-            dataKey="time"
-            stroke="#71717a"
-            tickLine={false}
-            axisLine={false}
-          />
+<CartesianGrid stroke="#27272a" vertical={false}/>
 
-          <YAxis
-            stroke="#71717a"
-            tickLine={false}
-            axisLine={false}
-          />
+<XAxis
+dataKey="time"
+stroke="#71717a"
+tickLine={false}
+axisLine={false}
+/>
 
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "#18181b",
-              border: "1px solid #3f3f46",
-              borderRadius: "8px"
-            }}
-          />
+<YAxis
+stroke="#71717a"
+tickLine={false}
+axisLine={false}
+/>
 
-          <Line
-            type="natural"
-            dataKey="cpu"
-            stroke="#3b82f6"
-            strokeWidth={3}
-            dot={false}
-            activeDot={{ r: 6 }}
-            isAnimationActive={true}
-          />
+<Tooltip
+contentStyle={{
+backgroundColor:"#18181b",
+border:"1px solid #3f3f46",
+borderRadius:"8px"
+}}
+/>
 
-        </LineChart>
+<Line
+type="natural"
+dataKey="cpu"
+stroke={highCPU ? "#ef4444" : "#3b82f6"}
+strokeWidth={3}
+dot={false}
+isAnimationActive={true}
+animationDuration={700}
+style={{
+filter: highCPU
+? "drop-shadow(0px 0px 8px #ef4444)"
+: "drop-shadow(0px 0px 6px #3b82f6)"
+}}
+/>
 
-      </ResponsiveContainer>
+</LineChart>
 
-    </div>
+</ResponsiveContainer>
 
-  );
+</div>
+);
 }

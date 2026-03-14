@@ -3,65 +3,126 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Line, Sphere } from "@react-three/drei";
 import { useRef } from "react";
+import * as THREE from "three";
+
+/* -----------------------------
+SERVER NODE WITH PULSING GLOW
+----------------------------- */
 
 function ServerNode({ position }: any) {
 
+  const ref = useRef<any>(null);
+
   const cpu = Math.random() * 100;
 
-  let color = "green";
+  let color = "#22c55e";
 
-  if (cpu > 80) color = "red";
-  else if (cpu > 50) color = "yellow";
+  if (cpu > 80) color = "#ef4444";
+  else if (cpu > 50) color = "#eab308";
+
+  useFrame(({ clock }) => {
+
+    const scale = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.05;
+
+    if (ref.current) {
+      ref.current.scale.set(scale, scale, scale);
+    }
+
+  });
 
   return (
-    <Sphere args={[0.35, 32, 32]} position={position}>
-      <meshStandardMaterial color={color} emissive={color} />
+    <Sphere ref={ref} args={[0.35, 32, 32]} position={position}>
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.8}
+        roughness={0.3}
+      />
     </Sphere>
   );
 }
 
+/* -----------------------------
+CONNECTION LINE
+----------------------------- */
+
 function Connection({ start, end }: any) {
+
   return (
-    <Line points={[start, end]} color="cyan" lineWidth={2} />
+    <Line
+      points={[start, end]}
+      color="#38bdf8"
+      lineWidth={2}
+    />
   );
 }
 
+/* -----------------------------
+SMOOTH PACKET FLOW
+----------------------------- */
+
 function DataPacket({ start, end }: any) {
+
   const ref = useRef<any>(null);
-  let progress = 0;
+  const progress = useRef(Math.random());
 
   useFrame(() => {
-    progress += 0.01;
-    if (progress > 1) progress = 0;
 
-    const x = start[0] + (end[0] - start[0]) * progress;
-    const y = start[1] + (end[1] - start[1]) * progress;
-    const z = start[2] + (end[2] - start[2]) * progress;
+    progress.current += 0.003;
+
+    if (progress.current > 1) progress.current = 0;
+
+    const p = progress.current;
+
+    const x = THREE.MathUtils.lerp(start[0], end[0], p);
+    const y = THREE.MathUtils.lerp(start[1], end[1], p);
+    const z = THREE.MathUtils.lerp(start[2], end[2], p);
 
     if (ref.current) {
       ref.current.position.set(x, y, z);
     }
+
   });
 
   return (
     <mesh ref={ref}>
-      <sphereGeometry args={[0.1, 16, 16]} />
-      <meshStandardMaterial color="yellow" emissive="orange" />
+      <sphereGeometry args={[0.08, 16, 16]} />
+      <meshStandardMaterial
+        color="#38bdf8"
+        emissive="#38bdf8"
+        emissiveIntensity={2}
+      />
     </mesh>
   );
 }
 
+/* -----------------------------
+TOPOLOGY MAP
+----------------------------- */
+
 export default function TopologyMap() {
 
   const servers = [
-    [-3, 0, 0],
-    [-1, 1, 0],
-    [1, 0, 0],
-    [3, 1, 0],
-    [0, -2, 0]
+    [-4, 0, 0],
+    [-2, 1.5, 0],
+    [0, 0, 0],
+    [2, 1.5, 0],
+    [4, 0, 0],
+    [-1, -2, 0],
+    [1, -2, 0]
+  ];
+
+  const connections = [
+    [servers[0], servers[1]],
+    [servers[1], servers[2]],
+    [servers[2], servers[3]],
+    [servers[3], servers[4]],
+    [servers[2], servers[5]],
+    [servers[2], servers[6]]
   ];
 
   return (
+
     <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6">
 
       <h2 className="text-xl mb-4 text-white">
@@ -70,33 +131,42 @@ export default function TopologyMap() {
 
       <div style={{ height: "450px" }}>
 
-        <Canvas camera={{ position: [0, 0, 6] }}>
+        <Canvas camera={{ position: [0, 2, 8] }}>
 
-          <ambientLight intensity={0.6} />
-          <pointLight position={[10, 10, 10]} />
+          {/* LIGHTING */}
+
+          <ambientLight intensity={0.7} />
+
+          <pointLight position={[10, 10, 10]} intensity={1} />
+
+          {/* SERVERS */}
 
           {servers.map((pos, i) => (
             <ServerNode key={i} position={pos} />
           ))}
 
-          <Connection start={servers[0]} end={servers[1]} />
-          <Connection start={servers[1]} end={servers[2]} />
-          <Connection start={servers[2]} end={servers[3]} />
-          <Connection start={servers[1]} end={servers[4]} />
+          {/* CONNECTIONS */}
 
-          {/* Animated packets */}
+          {connections.map((c, i) => (
+            <Connection key={i} start={c[0]} end={c[1]} />
+          ))}
 
-          <DataPacket start={servers[0]} end={servers[1]} />
-          <DataPacket start={servers[1]} end={servers[2]} />
-          <DataPacket start={servers[2]} end={servers[3]} />
-          <DataPacket start={servers[1]} end={servers[4]} />
+          {/* PACKETS FLOWING */}
 
-          <OrbitControls />
+          {connections.map((c, i) => (
+            <>
+              <DataPacket key={"p1"+i} start={c[0]} end={c[1]} />
+              <DataPacket key={"p2"+i} start={c[1]} end={c[0]} />
+            </>
+          ))}
+
+          <OrbitControls enableZoom enablePan enableRotate />
 
         </Canvas>
 
       </div>
 
     </div>
+
   );
 }
