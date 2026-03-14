@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { db, auth } from "../lib/firebase";
-import { collection, onSnapshot, addDoc } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -29,39 +29,29 @@ export default function Dashboard() {
 
     // -------- Authentication Check --------
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-
       if (!user) {
         router.push("/login");
       }
-
     });
 
     // -------- Firebase Metrics Listener --------
-    const unsubscribe = onSnapshot(
+    const unsubscribeMetrics = onSnapshot(
       collection(db, "metrics"),
       (snapshot) => {
 
         const data = snapshot.docs.map(doc => doc.data() as Metric);
-        setMetrics(data);
+
+        // Only keep last 50 metrics for clean charts
+        const latestMetrics = data.slice(-50);
+
+        setMetrics(latestMetrics);
 
       }
     );
 
-    // ---- Simulate live infrastructure metrics ----
-    const interval = setInterval(async () => {
-
-      await addDoc(collection(db, "metrics"), {
-        cpu: Math.floor(Math.random() * 100),
-        memory: Math.floor(Math.random() * 100),
-        network: Math.floor(Math.random() * 200)
-      });
-
-    }, 5000);
-
     return () => {
-      unsubscribe();
       unsubscribeAuth();
-      clearInterval(interval);
+      unsubscribeMetrics();
     };
 
   }, [router]);
