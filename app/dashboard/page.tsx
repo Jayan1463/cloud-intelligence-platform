@@ -27,24 +27,20 @@ export default function Dashboard() {
 
   useEffect(() => {
 
-    // -------- Authentication Check --------
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-      }
+      if (!user) router.push("/login");
     });
 
-    // -------- Firebase Metrics Listener --------
     const unsubscribeMetrics = onSnapshot(
       collection(db, "metrics"),
       (snapshot) => {
 
         const data = snapshot.docs.map(doc => doc.data() as Metric);
 
-        // Only keep last 50 metrics for clean charts
-        const latestMetrics = data.slice(-50);
+        // keep only last 30 metrics for smooth animation
+        const latest = data.slice(-30);
 
-        setMetrics(latestMetrics);
+        setMetrics(latest);
 
       }
     );
@@ -57,6 +53,7 @@ export default function Dashboard() {
   }, [router]);
 
   // ---------- Analytics ----------
+
   const avgCPU =
     metrics.length > 0
       ? Math.round(metrics.reduce((a, b) => a + (b.cpu ?? 0), 0) / metrics.length)
@@ -72,10 +69,8 @@ export default function Dashboard() {
       ? Math.round(metrics.reduce((a, b) => a + (b.network ?? 0), 0) / metrics.length)
       : 0;
 
-  // ---------- AI Cost Prediction ----------
   const predictedCost = predictCost(metrics);
 
-  // ---------- Anomaly Detection ----------
   const anomalyDetected =
     metrics.some(m => (m.cpu ?? 0) > 85 || (m.memory ?? 0) > 90);
 
@@ -92,12 +87,12 @@ export default function Dashboard() {
         </h1>
 
         {anomalyDetected && (
-          <div className="bg-red-900 border border-red-500 p-4 rounded-lg mb-6">
+          <div className="bg-red-900 border border-red-500 p-4 rounded-lg mb-6 animate-pulse">
             ⚠ Infrastructure anomaly detected (high CPU or memory usage)
           </div>
         )}
 
-        {/* -------- Cost Prediction -------- */}
+        {/* COST PREDICTION */}
 
         <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 mb-10">
 
@@ -115,7 +110,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* -------- Summary Metrics -------- */}
+        {/* SUMMARY CARDS */}
 
         <div className="grid grid-cols-3 gap-6 mb-10">
 
@@ -136,7 +131,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* -------- Metric Cards -------- */}
+        {/* LIVE METRIC CARDS */}
 
         <div className="grid grid-cols-3 gap-6 mb-12">
 
@@ -157,7 +152,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* -------- Charts -------- */}
+        {/* LIVE CHARTS */}
 
         <div className="space-y-10">
 
@@ -167,7 +162,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* -------- Infrastructure Map -------- */}
+        {/* INFRASTRUCTURE MAP */}
 
         <div className="mt-12">
           <TopologyMap />
