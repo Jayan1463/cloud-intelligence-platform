@@ -88,7 +88,7 @@ function DataPacket({ start, end, speed }: any) {
 
   return (
     <mesh ref={ref}>
-      <sphereGeometry args={[0.07, 16, 16]} />
+      <sphereGeometry args={[0.09, 16, 16]} />
       <meshStandardMaterial
         color="#0ea5e9"
         emissive="#0ea5e9"
@@ -133,7 +133,7 @@ export default function TopologyMap({ metrics = [] }: any) {
         Infrastructure Topology
       </h2>
 
-      <div style={{ height: "450px" }}>
+      <div style={{ height: "450px" }} className="rounded-lg overflow-hidden border border-[var(--border)]">
 
         <Canvas
           camera={{ position: [0, 2, 8] }}
