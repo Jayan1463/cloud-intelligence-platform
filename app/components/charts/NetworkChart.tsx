@@ -33,7 +33,11 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid stroke="#27272a" vertical={false} />
+          <CartesianGrid
+            stroke="#27272a"
+            vertical={false}
+            strokeDasharray="3 3"
+          />
 
           <XAxis
             dataKey="time"
@@ -43,6 +47,8 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
           />
 
           <YAxis
+            domain={[0, 200]}
+            ticks={[0, 50, 100, 150, 200]}
             stroke="#71717a"
             tickLine={false}
             axisLine={false}

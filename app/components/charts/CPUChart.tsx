@@ -33,7 +33,11 @@ export default function CPUChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid stroke="#27272a" vertical={false} />
+          <CartesianGrid
+            stroke="#27272a"
+            vertical={false}
+            strokeDasharray="3 3"
+          />
 
           <XAxis
             dataKey="time"
@@ -43,6 +47,8 @@ export default function CPUChart({ data }: { data: Metric[] }) {
           />
 
           <YAxis
+            domain={[0, 100]}
+            ticks={[0, 25, 50, 75, 100]}
             stroke="#71717a"
             tickLine={false}
             axisLine={false}
