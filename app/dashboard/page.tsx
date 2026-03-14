@@ -7,11 +7,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 import { predictCost } from "../lib/costPrediction";
+import { detectAnomaly } from "../lib/anomalyDetection";
 
 import Sidebar from "../components/ui/Sidebar";
+
 import CPUChart from "../components/charts/CPUChart";
 import MemoryChart from "../components/charts/MemoryChart";
 import NetworkChart from "../components/charts/NetworkChart";
+import CostChart from "../components/charts/CostChart";
+
+import CPUHeatmap from "../components/infrastructure/CPUHeatmap";
 import TopologyMap from "../components/infrastructure/TopologyMap";
 
 type Metric = {
@@ -37,7 +42,6 @@ export default function Dashboard() {
 
         const data = snapshot.docs.map(doc => doc.data() as Metric);
 
-        // keep last 30 metrics for smooth chart animation
         const latest = data.slice(-30);
 
         setMetrics(latest);
@@ -71,20 +75,7 @@ export default function Dashboard() {
 
   const predictedCost = predictCost(metrics);
 
-  // ---------- Improved Anomaly Detection ----------
-
-  const recentMetrics = metrics.slice(-5);
-
-  const avgRecentCPU =
-    recentMetrics.reduce((a, b) => a + (b.cpu ?? 0), 0) /
-    (recentMetrics.length || 1);
-
-  const avgRecentMemory =
-    recentMetrics.reduce((a, b) => a + (b.memory ?? 0), 0) /
-    (recentMetrics.length || 1);
-
-  const anomalyDetected =
-    avgRecentCPU > 85 || avgRecentMemory > 90;
+  const anomalyDetected = detectAnomaly(metrics);
 
   return (
 
@@ -100,11 +91,11 @@ export default function Dashboard() {
 
         {anomalyDetected && (
           <div className="bg-red-900 border border-red-500 p-4 rounded-lg mb-6 animate-pulse">
-            ⚠ Infrastructure anomaly detected (high CPU or memory usage)
+            ⚠ AI detected abnormal infrastructure behaviour
           </div>
         )}
 
-        {/* COST PREDICTION */}
+        {/* COST CARD */}
 
         <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 mb-10">
 
@@ -143,6 +134,10 @@ export default function Dashboard() {
 
         </div>
 
+        {/* CPU HEATMAP */}
+
+        <CPUHeatmap metrics={metrics} />
+
         {/* LIVE METRIC CARDS */}
 
         <div className="grid grid-cols-3 gap-6 mb-12">
@@ -164,12 +159,20 @@ export default function Dashboard() {
 
         </div>
 
+        {/* COST TREND GRAPH */}
+
+        <div className="mb-12">
+          <CostChart data={metrics} />
+        </div>
+
         {/* LIVE CHARTS */}
 
         <div className="space-y-10">
 
           <CPUChart data={metrics} />
+
           <MemoryChart data={metrics} />
+
           <NetworkChart data={metrics} />
 
         </div>
@@ -177,7 +180,7 @@ export default function Dashboard() {
         {/* INFRASTRUCTURE MAP */}
 
         <div className="mt-12">
-          <TopologyMap />
+          <TopologyMap metrics={metrics} />
         </div>
 
       </main>

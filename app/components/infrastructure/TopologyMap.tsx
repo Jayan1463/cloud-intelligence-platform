@@ -6,26 +6,26 @@ import { useRef } from "react";
 import * as THREE from "three";
 
 /* -----------------------------
-SERVER NODE WITH PULSING GLOW
+SERVER NODE WITH HEAT + ANOMALY
 ----------------------------- */
 
-function ServerNode({ position }: any) {
+function ServerNode({ position, cpu }: any) {
 
   const ref = useRef<any>(null);
-
-  const cpu = Math.random() * 100;
 
   let color = "#22c55e";
 
   if (cpu > 80) color = "#ef4444";
-  else if (cpu > 50) color = "#eab308";
+  else if (cpu > 60) color = "#eab308";
 
   useFrame(({ clock }) => {
 
-    const scale = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.05;
+    const t = clock.getElapsedTime();
+    const pulse = 1 + Math.sin(t * 2) * 0.05;
 
     if (ref.current) {
-      ref.current.scale.set(scale, scale, scale);
+      ref.current.scale.set(pulse, pulse, pulse);
+      ref.current.rotation.y += 0.003;
     }
 
   });
@@ -35,8 +35,9 @@ function ServerNode({ position }: any) {
       <meshStandardMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={0.8}
-        roughness={0.3}
+        emissiveIntensity={cpu > 80 ? 2 : 0.8}
+        roughness={0.2}
+        metalness={0.4}
       />
     </Sphere>
   );
@@ -53,22 +54,24 @@ function Connection({ start, end }: any) {
       points={[start, end]}
       color="#38bdf8"
       lineWidth={2}
+      transparent
+      opacity={0.6}
     />
   );
 }
 
 /* -----------------------------
-SMOOTH PACKET FLOW
+DATA PACKET FLOW
 ----------------------------- */
 
-function DataPacket({ start, end }: any) {
+function DataPacket({ start, end, speed }: any) {
 
   const ref = useRef<any>(null);
   const progress = useRef(Math.random());
 
   useFrame(() => {
 
-    progress.current += 0.003;
+    progress.current += speed;
 
     if (progress.current > 1) progress.current = 0;
 
@@ -86,7 +89,7 @@ function DataPacket({ start, end }: any) {
 
   return (
     <mesh ref={ref}>
-      <sphereGeometry args={[0.08, 16, 16]} />
+      <sphereGeometry args={[0.07, 16, 16]} />
       <meshStandardMaterial
         color="#38bdf8"
         emissive="#38bdf8"
@@ -97,28 +100,30 @@ function DataPacket({ start, end }: any) {
 }
 
 /* -----------------------------
-TOPOLOGY MAP
+MAIN TOPOLOGY MAP
 ----------------------------- */
 
-export default function TopologyMap() {
+export default function TopologyMap({ metrics = [] }: any) {
+
+  const cpu = metrics?.[metrics.length - 1]?.cpu ?? 20;
 
   const servers = [
-    [-4, 0, 0],
-    [-2, 1.5, 0],
-    [0, 0, 0],
-    [2, 1.5, 0],
-    [4, 0, 0],
-    [-1, -2, 0],
-    [1, -2, 0]
+    { pos: [-4, 0, 0], cpu },
+    { pos: [-2, 1.5, 0], cpu: cpu * 0.8 },
+    { pos: [0, 0, 0], cpu: cpu },
+    { pos: [2, 1.5, 0], cpu: cpu * 0.6 },
+    { pos: [4, 0, 0], cpu: cpu * 0.7 },
+    { pos: [-1, -2, 0], cpu: cpu * 0.9 },
+    { pos: [1, -2, 0], cpu: cpu * 0.5 }
   ];
 
   const connections = [
-    [servers[0], servers[1]],
-    [servers[1], servers[2]],
-    [servers[2], servers[3]],
-    [servers[3], servers[4]],
-    [servers[2], servers[5]],
-    [servers[2], servers[6]]
+    [servers[0].pos, servers[1].pos],
+    [servers[1].pos, servers[2].pos],
+    [servers[2].pos, servers[3].pos],
+    [servers[3].pos, servers[4].pos],
+    [servers[2].pos, servers[5].pos],
+    [servers[2].pos, servers[6].pos]
   ];
 
   return (
@@ -136,13 +141,13 @@ export default function TopologyMap() {
           {/* LIGHTING */}
 
           <ambientLight intensity={0.7} />
-
-          <pointLight position={[10, 10, 10]} intensity={1} />
+          <pointLight position={[10, 10, 10]} intensity={1.2} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
           {/* SERVERS */}
 
-          {servers.map((pos, i) => (
-            <ServerNode key={i} position={pos} />
+          {servers.map((s, i) => (
+            <ServerNode key={i} position={s.pos} cpu={s.cpu} />
           ))}
 
           {/* CONNECTIONS */}
@@ -151,13 +156,14 @@ export default function TopologyMap() {
             <Connection key={i} start={c[0]} end={c[1]} />
           ))}
 
-          {/* PACKETS FLOWING */}
+          {/* PACKET STREAMS */}
 
           {connections.map((c, i) => (
-            <>
-              <DataPacket key={"p1"+i} start={c[0]} end={c[1]} />
-              <DataPacket key={"p2"+i} start={c[1]} end={c[0]} />
-            </>
+            <group key={"packet-group-" + i}>
+              <DataPacket start={c[0]} end={c[1]} speed={0.003} />
+              <DataPacket start={c[1]} end={c[0]} speed={0.0025} />
+              <DataPacket start={c[0]} end={c[1]} speed={0.002} />
+            </group>
           ))}
 
           <OrbitControls enableZoom enablePan enableRotate />
