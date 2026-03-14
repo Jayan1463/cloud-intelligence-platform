@@ -16,7 +16,10 @@ type Metric = {
 
 export default function CPUChart({ data }: { data: Metric[] }) {
 
-  const chartData = data.map((m, i) => ({
+  // show only last 30 metrics
+  const recentData = data.slice(-30);
+
+  const chartData = recentData.map((m, i) => ({
     time: i + 1,
     cpu: m.cpu ?? 0
   }));
@@ -33,11 +36,7 @@ export default function CPUChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid
-            stroke="#27272a"
-            vertical={false}
-            strokeDasharray="3 3"
-          />
+          <CartesianGrid stroke="#27272a" vertical={false} />
 
           <XAxis
             dataKey="time"
@@ -47,8 +46,6 @@ export default function CPUChart({ data }: { data: Metric[] }) {
           />
 
           <YAxis
-            domain={[0, 100]}
-            ticks={[0, 25, 50, 75, 100]}
             stroke="#71717a"
             tickLine={false}
             axisLine={false}
@@ -63,12 +60,13 @@ export default function CPUChart({ data }: { data: Metric[] }) {
           />
 
           <Line
-            type="monotone"
+            type="natural"
             dataKey="cpu"
             stroke="#3b82f6"
             strokeWidth={3}
             dot={false}
             activeDot={{ r: 6 }}
+            isAnimationActive={true}
           />
 
         </LineChart>

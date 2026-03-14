@@ -16,7 +16,9 @@ type Metric = {
 
 export default function MemoryChart({ data }: { data: Metric[] }) {
 
-  const chartData = data.map((m, i) => ({
+  const recentData = data.slice(-30);
+
+  const chartData = recentData.map((m, i) => ({
     time: i + 1,
     memory: m.memory ?? 0
   }));
@@ -33,11 +35,7 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid
-            stroke="#27272a"
-            vertical={false}
-            strokeDasharray="3 3"
-          />
+          <CartesianGrid stroke="#27272a" vertical={false} />
 
           <XAxis
             dataKey="time"
@@ -47,8 +45,6 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
           />
 
           <YAxis
-            domain={[0, 100]}
-            ticks={[0, 25, 50, 75, 100]}
             stroke="#71717a"
             tickLine={false}
             axisLine={false}
@@ -63,12 +59,13 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
           />
 
           <Line
-            type="monotone"
+            type="natural"
             dataKey="memory"
             stroke="#22c55e"
             strokeWidth={3}
             dot={false}
             activeDot={{ r: 6 }}
+            isAnimationActive={true}
           />
 
         </LineChart>

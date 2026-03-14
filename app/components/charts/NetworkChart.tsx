@@ -16,7 +16,9 @@ type Metric = {
 
 export default function NetworkChart({ data }: { data: Metric[] }) {
 
-  const chartData = data.map((m, i) => ({
+  const recentData = data.slice(-30);
+
+  const chartData = recentData.map((m, i) => ({
     time: i + 1,
     network: m.network ?? 0
   }));
@@ -33,11 +35,7 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
 
         <LineChart data={chartData}>
 
-          <CartesianGrid
-            stroke="#27272a"
-            vertical={false}
-            strokeDasharray="3 3"
-          />
+          <CartesianGrid stroke="#27272a" vertical={false} />
 
           <XAxis
             dataKey="time"
@@ -47,8 +45,6 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
           />
 
           <YAxis
-            domain={[0, 200]}
-            ticks={[0, 50, 100, 150, 200]}
             stroke="#71717a"
             tickLine={false}
             axisLine={false}
@@ -63,12 +59,13 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
           />
 
           <Line
-            type="monotone"
+            type="natural"
             dataKey="network"
             stroke="#f59e0b"
             strokeWidth={3}
             dot={false}
             activeDot={{ r: 6 }}
+            isAnimationActive={true}
           />
 
         </LineChart>
