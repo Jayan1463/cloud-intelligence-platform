@@ -37,7 +37,7 @@ export default function Dashboard() {
 
         const data = snapshot.docs.map(doc => doc.data() as Metric);
 
-        // keep only last 30 metrics for smooth animation
+        // keep last 30 metrics for smooth chart animation
         const latest = data.slice(-30);
 
         setMetrics(latest);
@@ -71,8 +71,20 @@ export default function Dashboard() {
 
   const predictedCost = predictCost(metrics);
 
+  // ---------- Improved Anomaly Detection ----------
+
+  const recentMetrics = metrics.slice(-5);
+
+  const avgRecentCPU =
+    recentMetrics.reduce((a, b) => a + (b.cpu ?? 0), 0) /
+    (recentMetrics.length || 1);
+
+  const avgRecentMemory =
+    recentMetrics.reduce((a, b) => a + (b.memory ?? 0), 0) /
+    (recentMetrics.length || 1);
+
   const anomalyDetected =
-    metrics.some(m => (m.cpu ?? 0) > 85 || (m.memory ?? 0) > 90);
+    avgRecentCPU > 85 || avgRecentMemory > 90;
 
   return (
 
