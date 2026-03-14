@@ -29,7 +29,7 @@ return (
 
 <div className="chart-card">
 
-<h2 className="text-xl font-semibold mb-4">
+<h2 className="text-xl font-semibold mb-4 text-[var(--text)]">
 Memory Usage
 </h2>
 
