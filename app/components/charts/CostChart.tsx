@@ -48,10 +48,7 @@ Cost Prediction Trend
 
 <LineChart data={chartData}>
 
-<CartesianGrid
-stroke="var(--border)"
-vertical={false}
-/>
+<CartesianGrid stroke="var(--border)" vertical={false} />
 
 <XAxis
 dataKey="time"
