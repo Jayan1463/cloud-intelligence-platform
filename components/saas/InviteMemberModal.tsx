@@ -21,7 +21,8 @@ export default function InviteMemberModal() {
       return;
     }
 
-    setStatus(`Invite sent to ${email}`);
+    const deliveryInfo = payload.messageId ? ` (message: ${payload.messageId})` : "";
+    setStatus(`Invite sent to ${email}${deliveryInfo}`);
     setEmail("");
   }
 

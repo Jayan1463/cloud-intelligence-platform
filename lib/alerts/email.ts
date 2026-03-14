@@ -5,7 +5,17 @@ type SendEmailInput = {
   html?: string;
 };
 
-export async function sendEmailAlert(input: SendEmailInput): Promise<void> {
+export type SendEmailResult = {
+  provider: "resend";
+  messageId: string;
+  acceptedAt: string;
+};
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function sendEmailAlert(input: SendEmailInput): Promise<SendEmailResult> {
   if (!input.to || !input.subject || !input.text) {
     throw new Error("Missing email fields");
   }
@@ -17,23 +27,42 @@ export async function sendEmailAlert(input: SendEmailInput): Promise<void> {
     throw new Error("RESEND_API_KEY is not configured");
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      from,
-      to: [input.to],
-      subject: input.subject,
-      text: input.text,
-      html: input.html
-    })
-  });
+  let lastError = "Unknown email send failure";
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Failed to send email: ${response.status} ${body}`);
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from,
+        to: [input.to],
+        subject: input.subject,
+        text: input.text,
+        html: input.html
+      })
+    });
+
+    if (response.ok) {
+      const payload = (await response.json()) as { id?: string };
+      if (!payload.id) {
+        throw new Error("Resend accepted email but did not return message id");
+      }
+
+      return {
+        provider: "resend",
+        messageId: payload.id,
+        acceptedAt: new Date().toISOString()
+      };
+    }
+
+    lastError = `Failed to send email: ${response.status} ${await response.text()}`;
+    if (attempt < 3) {
+      await sleep(attempt * 300);
+    }
   }
+
+  throw new Error(lastError);
 }

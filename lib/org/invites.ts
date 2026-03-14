@@ -14,13 +14,15 @@ export async function sendOrganizationInviteEmail(input: {
   role: AppRole;
   invitedBy: string;
   inviteToken: string;
-}): Promise<void> {
+}): Promise<{ messageId: string; acceptedAt: string }> {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.VERCEL_URL ?? "http://localhost:3000";
   const baseUrl = appUrl.startsWith("http") ? appUrl : `https://${appUrl}`;
   const inviteUrl = `${baseUrl}/auth/signup?orgId=${encodeURIComponent(input.orgId)}&invite=${encodeURIComponent(input.inviteToken)}`;
 
-  const subject = `You're invited to join organization ${input.orgId}`;
+  const traceId = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  const subject = `[Cloud Intelligence Invite ${traceId}] You're invited to join organization ${input.orgId}`;
   const text = [
+    `[Cloud Intelligence Invite ${traceId}]`,
     `You have been invited as ${input.role}.`,
     `Invited by: ${input.invitedBy}`,
     `Accept invite: ${inviteUrl}`,
@@ -41,10 +43,15 @@ export async function sendOrganizationInviteEmail(input: {
     </div>
   `;
 
-  await sendEmailAlert({
+  const result = await sendEmailAlert({
     to: input.email,
     subject,
     text,
     html
   });
+
+  return {
+    messageId: result.messageId,
+    acceptedAt: result.acceptedAt
+  };
 }

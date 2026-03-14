@@ -29,9 +29,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ org
 
   const { token, tokenHash } = createInviteToken();
   const inviteId = `inv_${Date.now()}`;
+  let emailResult: { messageId: string; acceptedAt: string };
 
   try {
-    await sendOrganizationInviteEmail({
+    emailResult = await sendOrganizationInviteEmail({
       email,
       orgId,
       role,
@@ -54,6 +55,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ org
       status: "pending",
       tokenHash
     },
-    delivered: true
+    delivered: true,
+    deliveredAt: emailResult.acceptedAt,
+    messageId: emailResult.messageId
   });
 }
