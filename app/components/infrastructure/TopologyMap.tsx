@@ -18,7 +18,15 @@ type Server = {
 SERVER NODE
 ----------------------------- */
 
-function ServerNode({ position, cpu }: { position: Vec3; cpu: number }) {
+function ServerNode({
+  position,
+  cpu,
+  name
+}: {
+  position: Vec3;
+  cpu: number;
+  name: string;
+}) {
 
   const ref = useRef<THREE.Mesh | null>(null);
   const [hovered, setHovered] = useState(false);
@@ -54,10 +62,15 @@ function ServerNode({ position, cpu }: { position: Vec3; cpu: number }) {
         metalness={0.3}
         roughness={0.2}
       />
+      <Html distanceFactor={8} position={[0, 0.72, 0]} center>
+        <div className="px-2 py-1 text-[11px] rounded bg-black/75 text-white border border-white/15 whitespace-nowrap pointer-events-none">
+          {name}
+        </div>
+      </Html>
       {hovered && (
-        <Html distanceFactor={8} position={[0, 0.65, 0]}>
-          <div className="px-2 py-1 text-xs rounded bg-black/80 text-white border border-white/20 whitespace-nowrap">
-            CPU: {Math.round(cpu)}%
+        <Html distanceFactor={8} position={[0, 1.08, 0]} center>
+          <div className="px-2 py-1 text-xs rounded bg-black/90 text-white border border-white/20 whitespace-nowrap pointer-events-none">
+            {name}: {Math.round(cpu)}% CPU
           </div>
         </Html>
       )}
@@ -176,7 +189,7 @@ export default function TopologyMap({ metrics = [] }: { metrics?: Array<{ cpu?: 
           {/* Servers */}
 
           {servers.map((s, i) => (
-            <ServerNode key={i} position={s.pos} cpu={s.cpu} />
+            <ServerNode key={i} position={s.pos} cpu={s.cpu} name={s.name} />
           ))}
 
           {/* Connections */}
