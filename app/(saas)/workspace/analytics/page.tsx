@@ -14,10 +14,10 @@ export default function WorkspaceAnalyticsPage() {
     <section className="space-y-4">
       <h2 className="text-2xl font-semibold">Analytics</h2>
       <div className="grid gap-4 md:grid-cols-2">
-        <CPUChart metrics={metrics} />
-        <MemoryChart metrics={metrics} />
+        <CPUChart data={metrics} />
+        <MemoryChart data={metrics} />
       </div>
-      <NetworkChart metrics={metrics} />
+      <NetworkChart data={metrics} />
     </section>
   );
 }

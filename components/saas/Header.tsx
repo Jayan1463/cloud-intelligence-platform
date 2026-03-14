@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ProjectSwitcher from "@/components/saas/ProjectSwitcher";
 import NotificationCenter from "@/components/saas/NotificationCenter";
 import UserMenu from "@/components/saas/UserMenu";
@@ -10,7 +11,15 @@ export default function SaaSHeader() {
         <h1 className="text-lg font-semibold text-[var(--text)]">Acme Cloud Ops</h1>
       </div>
       <div className="flex items-center gap-3">
-        <ProjectSwitcher />
+        <Suspense
+          fallback={
+            <div className="rounded-md border border-[var(--border)] px-3 py-2 text-sm text-[var(--text-muted)]">
+              Loading projects...
+            </div>
+          }
+        >
+          <ProjectSwitcher />
+        </Suspense>
         <NotificationCenter />
         <UserMenu />
       </div>
