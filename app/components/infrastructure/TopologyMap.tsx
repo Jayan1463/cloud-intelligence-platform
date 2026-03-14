@@ -5,174 +5,144 @@ import { OrbitControls, Line, Sphere } from "@react-three/drei";
 import { useRef } from "react";
 import * as THREE from "three";
 
-/* -----------------------------
-SERVER NODE WITH HEAT + ANOMALY
------------------------------ */
-
 function ServerNode({ position, cpu }: any) {
 
-  const ref = useRef<any>(null);
+const ref = useRef<any>(null);
 
-  let color = "#22c55e";
+let color = "#22c55e";
 
-  if (cpu > 80) color = "#ef4444";
-  else if (cpu > 60) color = "#eab308";
+if(cpu>80) color="#ef4444";
+else if(cpu>60) color="#eab308";
 
-  useFrame(({ clock }) => {
+useFrame(({clock})=>{
 
-    const t = clock.getElapsedTime();
-    const pulse = 1 + Math.sin(t * 2) * 0.05;
+const pulse = 1 + Math.sin(clock.getElapsedTime()*2)*0.05;
 
-    if (ref.current) {
-      ref.current.scale.set(pulse, pulse, pulse);
-      ref.current.rotation.y += 0.003;
-    }
-
-  });
-
-  return (
-    <Sphere ref={ref} args={[0.35, 32, 32]} position={position}>
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={cpu > 80 ? 2 : 0.8}
-        roughness={0.2}
-        metalness={0.4}
-      />
-    </Sphere>
-  );
+if(ref.current){
+ref.current.scale.set(pulse,pulse,pulse);
+ref.current.rotation.y +=0.003;
 }
 
-/* -----------------------------
-CONNECTION LINE
------------------------------ */
+});
 
-function Connection({ start, end }: any) {
-
-  return (
-    <Line
-      points={[start, end]}
-      color="#38bdf8"
-      lineWidth={2}
-      transparent
-      opacity={0.6}
-    />
-  );
+return(
+<Sphere ref={ref} args={[0.35,32,32]} position={position}>
+<meshStandardMaterial
+color={color}
+emissive={color}
+emissiveIntensity={1}
+/>
+</Sphere>
+);
 }
 
-/* -----------------------------
-DATA PACKET FLOW
------------------------------ */
+function Connection({start,end}:any){
 
-function DataPacket({ start, end, speed }: any) {
-
-  const ref = useRef<any>(null);
-  const progress = useRef(Math.random());
-
-  useFrame(() => {
-
-    progress.current += speed;
-
-    if (progress.current > 1) progress.current = 0;
-
-    const p = progress.current;
-
-    const x = THREE.MathUtils.lerp(start[0], end[0], p);
-    const y = THREE.MathUtils.lerp(start[1], end[1], p);
-    const z = THREE.MathUtils.lerp(start[2], end[2], p);
-
-    if (ref.current) {
-      ref.current.position.set(x, y, z);
-    }
-
-  });
-
-  return (
-    <mesh ref={ref}>
-      <sphereGeometry args={[0.07, 16, 16]} />
-      <meshStandardMaterial
-        color="#38bdf8"
-        emissive="#38bdf8"
-        emissiveIntensity={2}
-      />
-    </mesh>
-  );
+return(
+<Line
+points={[start,end]}
+color="#38bdf8"
+lineWidth={2}
+transparent
+opacity={0.6}
+/>
+);
 }
 
-/* -----------------------------
-MAIN TOPOLOGY MAP
------------------------------ */
+function DataPacket({start,end,speed}:any){
 
-export default function TopologyMap({ metrics = [] }: any) {
+const ref=useRef<any>(null);
+const progress=useRef(Math.random());
 
-  const cpu = metrics?.[metrics.length - 1]?.cpu ?? 20;
+useFrame(()=>{
 
-  const servers = [
-    { pos: [-4, 0, 0], cpu },
-    { pos: [-2, 1.5, 0], cpu: cpu * 0.8 },
-    { pos: [0, 0, 0], cpu: cpu },
-    { pos: [2, 1.5, 0], cpu: cpu * 0.6 },
-    { pos: [4, 0, 0], cpu: cpu * 0.7 },
-    { pos: [-1, -2, 0], cpu: cpu * 0.9 },
-    { pos: [1, -2, 0], cpu: cpu * 0.5 }
-  ];
+progress.current += speed;
 
-  const connections = [
-    [servers[0].pos, servers[1].pos],
-    [servers[1].pos, servers[2].pos],
-    [servers[2].pos, servers[3].pos],
-    [servers[3].pos, servers[4].pos],
-    [servers[2].pos, servers[5].pos],
-    [servers[2].pos, servers[6].pos]
-  ];
+if(progress.current>1) progress.current=0;
 
-  return (
+const p=progress.current;
 
-    <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6">
+const x=THREE.MathUtils.lerp(start[0],end[0],p);
+const y=THREE.MathUtils.lerp(start[1],end[1],p);
+const z=THREE.MathUtils.lerp(start[2],end[2],p);
 
-      <h2 className="text-xl mb-4 text-white">
-        Infrastructure Topology
-      </h2>
+if(ref.current){
+ref.current.position.set(x,y,z);
+}
 
-      <div style={{ height: "450px" }}>
+});
 
-        <Canvas camera={{ position: [0, 2, 8] }}>
+return(
+<mesh ref={ref}>
+<sphereGeometry args={[0.07,16,16]} />
+<meshStandardMaterial
+color="#38bdf8"
+emissive="#38bdf8"
+emissiveIntensity={2}
+/>
+</mesh>
+);
+}
 
-          {/* LIGHTING */}
+export default function TopologyMap({metrics=[]}:any){
 
-          <ambientLight intensity={0.7} />
-          <pointLight position={[10, 10, 10]} intensity={1.2} />
-          <pointLight position={[-10, -10, -10]} intensity={0.5} />
+const cpu = metrics?.[metrics.length-1]?.cpu ?? 20;
 
-          {/* SERVERS */}
+const servers=[
+{pos:[-4,0,0],cpu},
+{pos:[-2,1.5,0],cpu:cpu*0.8},
+{pos:[0,0,0],cpu},
+{pos:[2,1.5,0],cpu:cpu*0.6},
+{pos:[4,0,0],cpu:cpu*0.7},
+{pos:[-1,-2,0],cpu:cpu*0.9},
+{pos:[1,-2,0],cpu:cpu*0.5}
+];
 
-          {servers.map((s, i) => (
-            <ServerNode key={i} position={s.pos} cpu={s.cpu} />
-          ))}
+const connections=[
+[servers[0].pos,servers[1].pos],
+[servers[1].pos,servers[2].pos],
+[servers[2].pos,servers[3].pos],
+[servers[3].pos,servers[4].pos],
+[servers[2].pos,servers[5].pos],
+[servers[2].pos,servers[6].pos]
+];
 
-          {/* CONNECTIONS */}
+return(
 
-          {connections.map((c, i) => (
-            <Connection key={i} start={c[0]} end={c[1]} />
-          ))}
+<div className="chart-card">
 
-          {/* PACKET STREAMS */}
+<h2 className="text-xl mb-4">
+Infrastructure Topology
+</h2>
 
-          {connections.map((c, i) => (
-            <group key={"packet-group-" + i}>
-              <DataPacket start={c[0]} end={c[1]} speed={0.003} />
-              <DataPacket start={c[1]} end={c[0]} speed={0.0025} />
-              <DataPacket start={c[0]} end={c[1]} speed={0.002} />
-            </group>
-          ))}
+<div style={{height:"450px"}}>
 
-          <OrbitControls enableZoom enablePan enableRotate />
+<Canvas camera={{position:[0,2,8]}}>
 
-        </Canvas>
+<ambientLight intensity={0.7}/>
+<pointLight position={[10,10,10]} intensity={1.2}/>
 
-      </div>
+{servers.map((s,i)=>(
+<ServerNode key={i} position={s.pos} cpu={s.cpu}/>
+))}
 
-    </div>
+{connections.map((c,i)=>(
+<Connection key={i} start={c[0]} end={c[1]}/>
+))}
 
-  );
+{connections.map((c,i)=>(
+<group key={"p"+i}>
+<DataPacket start={c[0]} end={c[1]} speed={0.003}/>
+<DataPacket start={c[1]} end={c[0]} speed={0.0025}/>
+</group>
+))}
+
+<OrbitControls/>
+
+</Canvas>
+
+</div>
+
+</div>
+);
 }

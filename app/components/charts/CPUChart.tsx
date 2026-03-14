@@ -27,7 +27,7 @@ const highCPU = recent.some(m => (m.cpu ?? 0) > 85);
 
 return (
 
-<div className="bg-zinc-900 border border-zinc-700 p-6 rounded-xl">
+<div className="chart-card">
 
 <h2 className="text-xl font-semibold mb-4">
 CPU Usage
@@ -37,25 +37,28 @@ CPU Usage
 
 <LineChart data={chartData}>
 
-<CartesianGrid stroke="#27272a" vertical={false}/>
+<CartesianGrid
+stroke="var(--border)"
+vertical={false}
+/>
 
 <XAxis
 dataKey="time"
-stroke="#71717a"
+stroke="#9ca3af"
 tickLine={false}
 axisLine={false}
 />
 
 <YAxis
-stroke="#71717a"
+stroke="#9ca3af"
 tickLine={false}
 axisLine={false}
 />
 
 <Tooltip
 contentStyle={{
-backgroundColor:"#18181b",
-border:"1px solid #3f3f46",
+backgroundColor:"var(--card)",
+border:"1px solid var(--border)",
 borderRadius:"8px"
 }}
 />

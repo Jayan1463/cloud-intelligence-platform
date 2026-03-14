@@ -1,34 +1,69 @@
 @import "tailwindcss";
 
-/* ---------- Global Theme ---------- */
+/* -----------------------------
+THEME VARIABLES
+----------------------------- */
 
 :root {
+
+  /* LIGHT THEME */
+
+  --background: #f8fafc;
+  --card: #ffffff;
+  --border: #e4e4e7;
+  --text: #09090b;
+
+}
+
+.dark {
+
+  /* DARK THEME */
+
   --background: #09090b;
   --card: #18181b;
   --border: #27272a;
   --text: #fafafa;
+
 }
 
-/* ---------- Base Styling ---------- */
+/* -----------------------------
+GLOBAL BASE
+----------------------------- */
+
+* {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
 
 body {
   background: var(--background);
   color: var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
-/* ---------- Scrollbar Styling ---------- */
+/* -----------------------------
+SCROLLBAR
+----------------------------- */
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--border);
   border-radius: 6px;
 }
 
@@ -36,37 +71,86 @@ body {
   background: #3f3f46;
 }
 
-/* ---------- Chart Containers ---------- */
+/* -----------------------------
+CHART CARDS
+----------------------------- */
 
 .chart-card {
-  background: #18181b;
-  border: 1px solid #27272a;
+
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.04);
+
 }
 
-/* ---------- Dashboard Cards ---------- */
+/* -----------------------------
+METRIC CARDS
+----------------------------- */
 
 .metric-card {
-  background: #18181b;
-  border: 1px solid #27272a;
+
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 12px;
+
   padding: 20px;
-  transition: all 0.2s ease;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
 }
 
 .metric-card:hover {
+
   border-color: #3b82f6;
-  transform: translateY(-2px);
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
+
 }
 
-/* ---------- Sidebar ---------- */
+/* -----------------------------
+SIDEBAR
+----------------------------- */
 
 .sidebar-link {
-  color: #a1a1aa;
-  transition: all 0.2s ease;
+
+  color: #71717a;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+
 }
 
 .sidebar-link:hover {
-  color: white;
+
+  color: var(--text);
+
+}
+
+/* -----------------------------
+GLASSMORPHISM (OPTIONAL UI)
+----------------------------- */
+
+.glass {
+
+  backdrop-filter: blur(10px);
+
+  background: rgba(255,255,255,0.6);
+
+}
+
+.dark .glass {
+
+  background: rgba(24,24,27,0.6);
+
 }
