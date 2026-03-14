@@ -9,9 +9,11 @@ THEME VARIABLES
   /* LIGHT THEME */
 
   --background: #f8fafc;
+  --bg: #f8fafc;
   --card: #ffffff;
   --border: #e4e4e7;
   --text: #09090b;
+  --text-muted: #52525b;
 
 }
 
@@ -20,9 +22,11 @@ THEME VARIABLES
   /* DARK THEME */
 
   --background: #09090b;
+  --bg: #09090b;
   --card: #18181b;
   --border: #27272a;
   --text: #fafafa;
+  --text-muted: #a1a1aa;
 
 }
 
