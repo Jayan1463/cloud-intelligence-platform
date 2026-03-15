@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const NAV_ITEMS = [
   { href: "/workspace/dashboard", label: "Dashboard" },
@@ -17,12 +18,24 @@ export default function SaaSSidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
+  const [role, setRole] = useState<"admin" | "member" | null>(null);
+
+  useEffect(() => {
+    async function loadRole() {
+      const response = await fetch("/api/auth/profile");
+      const payload = await response.json().catch(() => ({}));
+      if (response.ok) {
+        setRole(payload.role ?? null);
+      }
+    }
+    void loadRole();
+  }, []);
 
   return (
     <aside className="w-64 shrink-0 border-r border-[var(--border)] bg-[var(--card)] p-4">
       <p className="mb-4 text-xs uppercase tracking-wide text-[var(--text-muted)]">Cloud Intelligence</p>
       <nav className="space-y-2">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.filter((item) => role === "admin" || item.href !== "/workspace/settings/organization").map((item) => {
           const active = pathname.startsWith(item.href);
           const href = projectId ? `${item.href}?projectId=${encodeURIComponent(projectId)}` : item.href;
           return (

@@ -19,9 +19,10 @@ export default function SaaSLoginPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
+    const payload = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      setStatus("Invalid credentials. Use admin@test.com / 123456");
+      setStatus(payload.error ?? "Invalid credentials");
       setLoading(false);
       return;
     }
@@ -49,7 +50,7 @@ export default function SaaSLoginPage() {
       <button onClick={onSignIn} disabled={loading} className="w-full rounded-md bg-cyan-500 p-3 font-medium text-slate-900 disabled:opacity-60">
         {loading ? "Signing In..." : "Sign In"}
       </button>
-      <p className="text-xs text-[var(--text-muted)]">Demo admin: admin@test.com / 123456</p>
+      <p className="text-xs text-[var(--text-muted)]">Admin login: admin@test.com / 123456</p>
       {status ? <p className="text-sm text-rose-300">{status}</p> : null}
       <div className="flex justify-between text-sm">
         <Link href="/auth/forgot-password">Forgot password?</Link>
