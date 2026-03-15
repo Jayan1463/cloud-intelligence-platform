@@ -1,14 +1,39 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { OrganizationMember } from "@/types/org";
 
-const MEMBERS: OrganizationMember[] = [
-  { uid: "u_1", email: "admin@acme.com", role: "admin", status: "active", joinedAt: "2026-03-01" },
-  { uid: "u_2", email: "ops@acme.com", role: "member", status: "active", joinedAt: "2026-03-08" },
-  { uid: "u_3", email: "dev@acme.com", role: "member", status: "invited" }
-];
-
 export default function OrgMemberTable() {
+  const [members, setMembers] = useState<OrganizationMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadMembers() {
+    const response = await fetch("/api/organizations/demo-org/members");
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setMembers([]);
+      setLoading(false);
+      return;
+    }
+    setMembers(payload.members ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    void loadMembers();
+  }, []);
+
+  useEffect(() => {
+    function handleRefresh() {
+      void loadMembers();
+    }
+    window.addEventListener("org-members-refresh", handleRefresh);
+    return () => window.removeEventListener("org-members-refresh", handleRefresh);
+  }, []);
+
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--card)]">
+      {loading ? <p className="p-3 text-sm text-[var(--text-muted)]">Loading members...</p> : null}
       <table className="w-full text-sm">
         <thead className="text-left text-[var(--text-muted)]">
           <tr>
@@ -19,7 +44,7 @@ export default function OrgMemberTable() {
           </tr>
         </thead>
         <tbody>
-          {MEMBERS.map((member) => (
+          {members.map((member) => (
             <tr key={member.uid} className="border-t border-[var(--border)] text-[var(--text)]">
               <td className="p-3">{member.email}</td>
               <td className="p-3 capitalize">{member.role}</td>

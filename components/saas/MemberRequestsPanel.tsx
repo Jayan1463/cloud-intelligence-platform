@@ -40,6 +40,7 @@ export default function MemberRequestsPanel() {
     }
     setStatus(`Approved ${email}`);
     setRequests((prev) => prev.filter((request) => request.email !== email));
+    window.dispatchEvent(new Event("org-members-refresh"));
   }
 
   useEffect(() => {

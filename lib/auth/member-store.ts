@@ -15,6 +15,10 @@ type MemberRequest = {
 const approvedMembers: MemberAccount[] = [];
 const pendingRequests: MemberRequest[] = [];
 
+export function getApprovedMembers() {
+  return [...approvedMembers];
+}
+
 export function createMemberAccessRequest(input: { name: string; email: string; password: string }) {
   const name = input.name.trim();
   const email = input.email.trim().toLowerCase();
