@@ -1,13 +1,22 @@
-export default function WorkspaceAlertsPage() {
-  const alerts = [
-    { id: "a1", type: "cpu", severity: "high", message: "CPU > 85% on core-api" },
-    { id: "a2", type: "memory", severity: "medium", message: "Memory spike on worker queue" },
-    { id: "a3", type: "network", severity: "medium", message: "Network anomaly detected" }
-  ];
+import { getAlertsForProject, getSelectedProject } from "@/lib/workspace/data";
+
+type AlertsPageProps = {
+  searchParams?: Promise<{
+    projectId?: string;
+  }>;
+};
+
+export default async function WorkspaceAlertsPage({ searchParams }: AlertsPageProps) {
+  const params = await searchParams;
+  const selectedProject = getSelectedProject(params?.projectId);
+  const alerts = getAlertsForProject(params?.projectId);
 
   return (
     <section className="space-y-4">
       <h2 className="text-2xl font-semibold">Alerts</h2>
+      <p className="text-sm text-[var(--text-muted)]">
+        Showing {alerts.length} open alerts for {selectedProject.name}
+      </p>
       <div className="space-y-3">
         {alerts.map((alert) => (
           <div key={alert.id} className="rounded-md border border-[var(--border)] bg-[var(--card)] p-4">

@@ -6,7 +6,7 @@ type SendEmailInput = {
 };
 
 export type SendEmailResult = {
-  provider: "resend";
+  provider: "resend" | "dev-log";
   messageId: string;
   acceptedAt: string;
 };
@@ -20,11 +20,29 @@ export async function sendEmailAlert(input: SendEmailInput): Promise<SendEmailRe
     throw new Error("Missing email fields");
   }
 
+  const deliveryMode = process.env.EMAIL_DELIVERY_MODE ?? "auto";
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.ALERT_FROM_EMAIL ?? "Cloud Ops <onboarding@resend.dev>";
+  const shouldUseDevLog = deliveryMode === "log" || (deliveryMode === "auto" && !apiKey);
+
+  if (shouldUseDevLog) {
+    const mockId = `dev_${Date.now()}`;
+    console.info("[email-dev-log] Simulated email delivery", {
+      messageId: mockId,
+      to: input.to,
+      from,
+      subject: input.subject
+    });
+
+    return {
+      provider: "dev-log",
+      messageId: mockId,
+      acceptedAt: new Date().toISOString()
+    };
+  }
 
   if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured");
+    throw new Error('RESEND_API_KEY is not configured. Set EMAIL_DELIVERY_MODE="log" for local development.');
   }
 
   let lastError = "Unknown email send failure";

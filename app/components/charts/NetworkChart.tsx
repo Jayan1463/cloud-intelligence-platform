@@ -22,6 +22,9 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
     time: i + 1,
     network: m.network ?? 0
   }));
+  const xTicks = chartData
+    .map((point) => point.time)
+    .filter((time, index, arr) => index % 2 === 0 || time === arr[arr.length - 1]);
 
   return (
 
@@ -45,6 +48,9 @@ export default function NetworkChart({ data }: { data: Metric[] }) {
             stroke="#9ca3af"
             tickLine={false}
             axisLine={false}
+            ticks={xTicks}
+            interval={0}
+            minTickGap={20}
           />
 
           <YAxis

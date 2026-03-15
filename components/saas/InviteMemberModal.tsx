@@ -11,7 +11,7 @@ export default function InviteMemberModal() {
     setStatus("Sending invite...");
     const response = await fetch("/api/organizations/demo-org/invites", {
       method: "POST",
-      headers: { "Content-Type": "application/json", authorization: "Bearer demo-user", "x-org-id": "demo-org", "x-role": "admin" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, role })
     });
 

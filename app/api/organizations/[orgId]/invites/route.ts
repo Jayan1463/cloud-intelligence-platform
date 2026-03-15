@@ -4,8 +4,13 @@ import { canManageOrganization } from "@/lib/auth/rbac";
 import { ensureOrgAccess } from "@/lib/org/access";
 import { createInviteToken, sendOrganizationInviteEmail } from "@/lib/org/invites";
 import type { AppRole } from "@/types/auth";
+import { isAdminAuthenticated } from "@/lib/auth/admin";
 
 export async function POST(request: Request, { params }: { params: Promise<{ orgId: string }> }) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "Admin login required" }, { status: 401 });
+  }
+
   const session = await getSessionContext();
   const { orgId } = await params;
 

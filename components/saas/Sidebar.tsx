@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const NAV_ITEMS = [
+  { href: "/workspace/dashboard", label: "Dashboard" },
+  { href: "/workspace/projects", label: "Projects" },
   { href: "/workspace/infrastructure", label: "Infrastructure" },
   { href: "/workspace/analytics", label: "Analytics" },
   { href: "/workspace/cost", label: "Cost Intelligence" },
@@ -13,6 +15,8 @@ const NAV_ITEMS = [
 
 export default function SaaSSidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get("projectId");
 
   return (
     <aside className="w-64 shrink-0 border-r border-[var(--border)] bg-[var(--card)] p-4">
@@ -20,10 +24,11 @@ export default function SaaSSidebar() {
       <nav className="space-y-2">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
+          const href = projectId ? `${item.href}?projectId=${encodeURIComponent(projectId)}` : item.href;
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={href}
               className={`block rounded-md px-3 py-2 text-sm transition ${
                 active ? "bg-cyan-500/15 text-cyan-300" : "text-[var(--text)] hover:bg-white/5"
               }`}

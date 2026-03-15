@@ -31,6 +31,14 @@ Backend
 Deployment
 - Vercel
 
+## Email Development Mode
+
+You can build and test invite/notification flows without a custom sending domain.
+
+- Set `EMAIL_DELIVERY_MODE=log` to simulate email delivery.
+- In this mode, the app logs the email payload and returns a mock message id.
+- When ready for production, set `RESEND_API_KEY` and optionally `ALERT_FROM_EMAIL`, then remove `EMAIL_DELIVERY_MODE=log`.
+
 ## Live Demo
 
 https://cloud-intelligence-platform-sigma.vercel.app/login

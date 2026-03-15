@@ -25,6 +25,10 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
 
   const memorySpike = recent.some(m => (m.memory ?? 0) > 90);
 
+  const xTicks = chartData
+    .map((point) => point.time)
+    .filter((time, index, arr) => index % 2 === 0 || time === arr[arr.length - 1]);
+
   return (
 
     <div className="chart-card">
@@ -48,6 +52,9 @@ export default function MemoryChart({ data }: { data: Metric[] }) {
             stroke="#9ca3af"
             tickLine={false}
             axisLine={false}
+            ticks={xTicks}
+            interval={0}
+            minTickGap={20}
           />
 
           <YAxis

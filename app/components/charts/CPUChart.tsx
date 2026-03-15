@@ -25,6 +25,10 @@ export default function CPUChart({ data }: { data: Metric[] }) {
 
   const highCPU = recent.some(m => (m.cpu ?? 0) > 85);
 
+  const xTicks = chartData
+    .map((point) => point.time)
+    .filter((time, index, arr) => index % 2 === 0 || time === arr[arr.length - 1]);
+
   return (
 
     <div className="chart-card">
@@ -47,6 +51,9 @@ export default function CPUChart({ data }: { data: Metric[] }) {
             stroke="#9ca3af"
             tickLine={false}
             axisLine={false}
+            ticks={xTicks}
+            interval={0}
+            minTickGap={20}
           />
 
           <YAxis
