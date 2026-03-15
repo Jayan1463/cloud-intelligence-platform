@@ -17,7 +17,7 @@ export default async function MembersSettingsPage() {
           <span className="font-medium">{session.role ?? "none"}</span>.
         </p>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
-          Admin accounts can approve access requests. If you cannot approve requests, login with <span className="font-medium">admin@test.com / 123456</span>.
+          Admin accounts can approve access requests. If you cannot approve requests, sign in with an admin account.
         </p>
       </div>
       {canManage ? <InviteMemberModal /> : <p className="surface-soft p-3 text-sm text-[var(--text-muted)]">Members cannot send invites.</p>}

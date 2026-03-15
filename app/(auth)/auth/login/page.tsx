@@ -76,31 +76,21 @@ export default function SaaSLoginPage() {
           </button>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => {
-              setEmail("admin@test.com");
-              setPassword("123456");
-            }}
-            className="btn-secondary px-3 py-2 text-sm"
-          >
-            Use Admin Demo
-          </button>
+        <div className="mt-4">
           <button
             type="button"
             onClick={() => {
               setEmail("member@test.com");
               setPassword("123456");
             }}
-            className="btn-secondary px-3 py-2 text-sm"
+            className="btn-secondary w-full px-3 py-2 text-sm"
           >
             Use Member Demo
           </button>
         </div>
 
         <p className="mt-4 text-xs text-[var(--text-muted)]">
-          Admin: <span className="font-medium">admin@test.com / 123456</span> | Member: <span className="font-medium">member@test.com / 123456</span>
+          Member demo: <span className="font-medium">member@test.com / 123456</span>
         </p>
         {status ? (
           <p className={`mt-3 rounded-lg border p-2 text-sm ${status.toLowerCase().includes("invalid") ? "border-[var(--danger)] text-[var(--danger)]" : "border-[var(--warning)] text-[var(--warning)]"}`}>

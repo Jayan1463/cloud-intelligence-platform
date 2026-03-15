@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   } else if (isMemberRequestPending(memberStore, email)) {
     return NextResponse.json({ error: "Approval pending. Wait for admin approval." }, { status: 403 });
   } else {
-    return NextResponse.json({ error: "Invalid credentials. Use admin@test.com / 123456 or create an account first." }, { status: 401 });
+    return NextResponse.json({ error: "Invalid credentials. Check your email/password or create an account first." }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true, email, role });
