@@ -16,7 +16,7 @@ export default function Home() {
             <Link className="btn-primary px-5 py-3 text-sm font-semibold" href="/auth/login">
               Open Workspace
             </Link>
-            <Link className="btn-secondary px-5 py-3 text-sm font-semibold" href="/workspace/showcase">
+            <Link className="btn-secondary px-5 py-3 text-sm font-semibold" href="/showcase">
               View Showcase
             </Link>
           </div>

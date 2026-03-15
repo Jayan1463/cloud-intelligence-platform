@@ -1,6 +1,23 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSessionContext } from "@/lib/auth/session";
+import { getOrganizationProfile, ORG_PROFILE_COOKIE, readOrganizationProfileStore } from "@/lib/org/profile-store";
 
-export default function OrganizationSettingsPage() {
+function formatDate(value: string): string {
+  const parsed = Date.parse(value);
+  if (Number.isNaN(parsed)) {
+    return "Unknown";
+  }
+  return new Date(parsed).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
+export default async function OrganizationSettingsPage() {
+  const session = await getSessionContext();
+  const orgId = session.orgId ?? "demo-org";
+  const cookieStore = await cookies();
+  const profileStore = readOrganizationProfileStore(cookieStore.get(ORG_PROFILE_COOKIE)?.value);
+  const organization = getOrganizationProfile(profileStore, orgId);
+
   return (
     <section className="space-y-6">
       <h2 className="text-2xl font-semibold">Organization Settings</h2>
@@ -9,11 +26,11 @@ export default function OrganizationSettingsPage() {
         <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
           <h3 className="text-base font-semibold">Profile</h3>
           <div className="mt-3 space-y-2 text-sm text-[var(--text-muted)]">
-            <p>Organization: Acme Cloud Ops</p>
-            <p>Organization ID: org_acme_ops_001</p>
-            <p>Primary Email: admin@acmeops.example</p>
-            <p>Created: March 1, 2026</p>
-            <p>Region: ap-northeast-1</p>
+            <p>Organization: {organization.name}</p>
+            <p>Organization ID: {organization.id}</p>
+            <p>Primary Email: {organization.primaryEmail}</p>
+            <p>Created: {formatDate(organization.createdAt)}</p>
+            <p>Region: {organization.region}</p>
           </div>
           <Link
             className="mt-4 inline-block rounded-md border border-[var(--border)] px-3 py-2 text-sm text-[var(--text)]"
