@@ -1,55 +1,254 @@
-# Cloud Intelligence Platform
+Cloud Intelligence Platform
 
-A cloud infrastructure monitoring and analytics platform built with Next.js, Firebase, and real-time visualization.
+A demo SaaS Cloud Operations Platform built with Next.js, React, and TypeScript that simulates how modern cloud infrastructure management tools operate.
 
-## Features
+The platform demonstrates multi-tenant SaaS architecture, role-based authentication, protected workspaces, and cloud operations dashboards used in real-world DevOps and cloud monitoring platforms.
 
-- Real-time infrastructure metrics monitoring
-- AI-based cloud cost prediction
-- Infrastructure topology visualization
-- 3D server network with animated data packets
-- Anomaly detection for CPU and memory spikes
-- Authentication system
-- Interactive analytics dashboard
+🔗 Live Demo
+https://cloud-intelligence-platform-sigma.vercel.app
 
-## Tech Stack
+⸻
+
+Overview
+
+Cloud Intelligence Platform is designed to showcase the architecture of a modern cloud management SaaS application.
+
+It includes:
+	•	Authentication system
+	•	Role-based access control
+	•	Organization and workspace management
+	•	Infrastructure visualization
+	•	Alerts monitoring
+	•	Cost analytics dashboards
+	•	Security center modules
+
+The project uses demo datasets and cookie-based persistence to simulate real backend behavior while remaining lightweight and easy to deploy.
+
+⸻
+
+Features
+
+Authentication System
+	•	Login / Signup flow
+	•	Forgot password / reset password pages
+	•	Secure cookie-based authentication
+	•	Role-based access (Admin / Member)
+
+Protected Workspace
+
+All routes under /workspace are protected by middleware.
+
+Features include:
+	•	Workspace dashboard with KPIs
+	•	Project switcher
+	•	Project-scoped infrastructure views
+	•	Alerts monitoring and triage
+
+Infrastructure Monitoring
+	•	Infrastructure topology visualization
+	•	Service dependencies overview
+	•	Operational insights dashboard
+
+Analytics & Cost Intelligence
+	•	Usage analytics dashboards
+	•	Cost monitoring views
+	•	Chart-based visualizations
+
+Security Center
+	•	Security insights
+	•	Cloud security solution showcase
+	•	Risk visibility
+
+Organization Management
+
+Admins can manage:
+	•	Organization profile
+	•	Member invitations
+	•	Member approval requests
+	•	Organization settings
+
+⸻
+
+Architecture
+
+The project follows a modern SaaS architecture pattern.
+
+Public Routes
+
+/
+/showcase
+
+Authentication Routes
+
+/auth/login
+/auth/signup
+/auth/forgot-password
+/auth/reset-password
+
+Protected Workspace
+
+/workspace/dashboard
+/workspace/projects
+/workspace/infrastructure
+/workspace/alerts
+/workspace/analytics
+/workspace/cost
+/workspace/security
+
+Organization Admin
+
+/workspace/settings/profile
+/workspace/settings/plan
+/workspace/settings/security
+/workspace/settings/integrations
+/workspace/settings/danger
+
+Middleware protects workspace routes and enforces role-based access control.
+
+⸻
+
+Tech Stack
 
 Frontend
-- Next.js
-- React
-- TailwindCSS
-
-Visualization
-- Three.js
-- React Three Fiber
-- Recharts
+	•	Next.js (App Router)
+	•	React
+	•	TypeScript
+	•	Tailwind CSS
 
 Backend
-- Firebase Firestore
-- Firebase Authentication
+	•	Next.js API Route Handlers
+	•	Middleware-based authentication
+	•	Cookie-backed data storage
+
+Integrations
+	•	Email notifications
+	•	Slack webhook support
+	•	Resend webhook endpoint
 
 Deployment
-- Vercel
+	•	Vercel
 
-## Email Development Mode
+⸻
 
-You can build and test invite/notification flows without a custom sending domain.
+Project Structure
 
-- Set `EMAIL_DELIVERY_MODE=log` to simulate email delivery.
-- In this mode, the app logs the email payload and returns a mock message id.
-- When ready for production, set `RESEND_API_KEY` and optionally `ALERT_FROM_EMAIL`, then remove `EMAIL_DELIVERY_MODE=log`.
+app/
+ ├─ api/
+ │   ├─ auth
+ │   ├─ organizations
+ │   ├─ projects
+ │
+ ├─ auth/
+ │   ├─ login
+ │   ├─ signup
+ │   ├─ reset
+ │
+ ├─ workspace/
+ │   ├─ dashboard
+ │   ├─ projects
+ │   ├─ infrastructure
+ │   ├─ alerts
+ │   ├─ analytics
+ │   ├─ cost
+ │   ├─ security
+ │   └─ settings
+ │
+components/
+lib/
+middleware.ts
 
-## Live Demo
 
-https://cloud-intelligence-platform-sigma.vercel.app/login
+⸻
 
-## Screenshots
+API Endpoints
 
-Dashboard, infrastructure topology, and analytics views.
+Authentication
 
-## Future Improvements
+POST /api/auth/login
+POST /api/auth/signup
 
-- Kubernetes cluster monitoring
-- Real cloud provider pricing APIs
-- AI anomaly prediction
-- Multi-user team dashboards
+Organizations
+
+PATCH /api/organizations/[orgId]
+
+Updates organization profile information which is reflected across the workspace UI.
+
+Integrations
+
+POST /api/webhooks/slack
+POST /api/webhooks/resend
+
+
+⸻
+
+Data Handling
+
+This project uses demo datasets for metrics and project data.
+
+Persistence is simulated using:
+	•	cookie-backed storage
+	•	local state management
+	•	API route handlers
+
+This makes the platform ideal for demo environments and SaaS architecture learning.
+
+⸻
+
+Running Locally
+
+Clone the repository
+
+git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY.git
+
+Navigate into the project
+
+cd YOUR_REPOSITORY
+
+Install dependencies
+
+npm install
+
+Start development server
+
+npm run dev
+
+Open in browser
+
+http://localhost:3000
+
+
+⸻
+
+Deployment
+
+This project is optimized for Vercel deployment.
+
+Steps:
+	1.	Push repository to GitHub
+	2.	Import project into Vercel
+	3.	Deploy
+
+Live platform:
+https://cloud-intelligence-platform-sigma.vercel.app
+
+⸻
+
+Learning Outcomes
+
+This project demonstrates concepts used in real SaaS platforms such as:
+	•	Multi-tenant application architecture
+	•	Authentication workflows
+	•	Role-based authorization
+	•	Middleware-based route protection
+	•	API-driven frontend applications
+	•	Modular UI architecture
+
+⸻
+
+Author
+
+Mrithyunjayan M
+
+Computer Science Engineering Student
+Interested in Cloud Computing, SaaS Architecture, and Full Stack Development
+
