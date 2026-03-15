@@ -23,7 +23,7 @@ export default function SaaSThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-      className="rounded-md border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text)]"
+      className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm text-[var(--text)]"
     >
       {theme === "dark" ? "Light Mode" : "Dark Mode"}
     </button>

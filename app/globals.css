@@ -1,160 +1,184 @@
 @import "tailwindcss";
 
-/* -----------------------------
-THEME VARIABLES
------------------------------ */
-
 :root {
-
-  /* LIGHT THEME */
-
-  --background: #f8fafc;
-  --bg: #f8fafc;
+  --background: #eef3ff;
+  --bg: #eef3ff;
+  --bg-soft: #f7faff;
   --card: #ffffff;
-  --border: #e4e4e7;
-  --text: #09090b;
-  --text-muted: #52525b;
-
+  --card-soft: #f7fbff;
+  --border: #d6e0f0;
+  --text: #112441;
+  --text-muted: #4f6485;
+  --primary: #1a73e8;
+  --primary-strong: #0b57d0;
+  --success: #188038;
+  --warning: #f9ab00;
+  --danger: #d93025;
+  --shadow: 0 20px 40px rgba(23, 46, 90, 0.12);
 }
 
 .dark {
-
-  /* DARK THEME */
-
-  --background: #09090b;
-  --bg: #09090b;
-  --card: #18181b;
-  --border: #27272a;
-  --text: #fafafa;
-  --text-muted: #a1a1aa;
-
+  --background: #061124;
+  --bg: #061124;
+  --bg-soft: #0b1b33;
+  --card: #0f223d;
+  --card-soft: #142945;
+  --border: #1f3a60;
+  --text: #e8f0ff;
+  --text-muted: #9fb5d8;
+  --primary: #4ea1ff;
+  --primary-strong: #2b7de9;
+  --success: #64d187;
+  --warning: #f9c44f;
+  --danger: #ff7a7a;
+  --shadow: 0 22px 44px rgba(2, 10, 25, 0.45);
 }
 
-/* -----------------------------
-GLOBAL BASE
------------------------------ */
-
 * {
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
+  margin: 0;
   color: var(--text);
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  background:
+    radial-gradient(90rem 45rem at 12% -10%, rgba(26, 115, 232, 0.2), transparent 60%),
+    radial-gradient(70rem 40rem at 100% 8%, rgba(24, 128, 56, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--bg-soft), var(--bg));
+  font-family: "Avenir Next", "Segoe UI Variable", "Trebuchet MS", sans-serif;
 }
 
-/* -----------------------------
-SCROLLBAR
------------------------------ */
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Avenir Next Condensed", "Gill Sans", "Segoe UI", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 40%, transparent);
+}
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 6px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: color-mix(in srgb, var(--text-muted) 55%, transparent);
+  background-clip: padding-box;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* -----------------------------
-CHART CARDS
------------------------------ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
-.chart-card {
+.animate-rise {
+  animation: rise-in 0.45s ease both;
+}
 
-  background: var(--card);
+.animate-fade {
+  animation: fade-in 0.5s ease both;
+}
+
+.surface {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.04);
-
+  border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card) 95%, transparent), var(--card));
+  box-shadow: var(--shadow);
 }
 
-/* -----------------------------
-METRIC CARDS
------------------------------ */
-
-.metric-card {
-
-  background: var(--card);
+.surface-soft {
   border: 1px solid var(--border);
-  border-radius: 12px;
-
-  padding: 20px;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-
+  border-radius: 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-soft) 94%, transparent), var(--card-soft));
 }
 
-.metric-card:hover {
-
-  border-color: #3b82f6;
-
-  transform: translateY(-3px);
-
-  box-shadow:
-    0 10px 25px rgba(0,0,0,0.08);
-
+.btn-primary {
+  border: 1px solid color-mix(in srgb, var(--primary-strong) 70%, transparent);
+  border-radius: 10px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 88%, white 12%), var(--primary-strong));
+  color: #ffffff;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-/* -----------------------------
-SIDEBAR
------------------------------ */
-
-.sidebar-link {
-
-  color: #71717a;
-
-  transition:
-    color 0.2s ease,
-    background 0.2s ease;
-
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
-.sidebar-link:hover {
-
+.btn-secondary {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--card) 85%, transparent);
   color: var(--text);
-
 }
 
-/* -----------------------------
-GLASSMORPHISM (OPTIONAL UI)
------------------------------ */
-
-.glass {
-
-  backdrop-filter: blur(10px);
-
-  background: rgba(255,255,255,0.6);
-
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--card-soft) 92%, transparent);
 }
 
-.dark .glass {
+.kpi-tile {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--card) 94%, transparent), var(--card-soft));
+  padding: 16px;
+}
 
-  background: rgba(24,24,27,0.6);
+.grid-overlay {
+  position: relative;
+}
 
+.grid-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--border) 50%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border) 50%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.15;
+  pointer-events: none;
 }

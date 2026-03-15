@@ -29,32 +29,41 @@ export default function SaaSSignupPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md space-y-4 p-8">
-      <h1 className="text-2xl font-semibold">Sign Up</h1>
-      <input
-        className="w-full rounded-md border border-[var(--border)] bg-transparent p-3"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        className="w-full rounded-md border border-[var(--border)] bg-transparent p-3"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="w-full rounded-md border border-[var(--border)] bg-transparent p-3"
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={onCreateAccount} disabled={loading} className="w-full rounded-md bg-cyan-500 p-3 font-medium text-slate-900 disabled:opacity-60">
-        {loading ? "Submitting..." : "Create Account"}
-      </button>
-      {status ? <p className="text-sm text-[var(--text-muted)]">{status}</p> : null}
-      <p className="text-sm">Already have an account? <Link href="/auth/login">Login</Link></p>
+    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center px-4 py-8 md:px-8">
+      <section className="surface w-full animate-rise p-6 md:p-8">
+        <h1 className="text-3xl font-semibold">Request Member Access</h1>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
+          Submit your account details and an admin can approve you from Organization Members.
+        </p>
+        <div className="mt-5 space-y-3">
+          <input
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--card-soft)] p-3"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--card-soft)] p-3"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--card-soft)] p-3"
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button onClick={onCreateAccount} disabled={loading} className="btn-primary w-full p-3 text-sm font-semibold disabled:opacity-60">
+            {loading ? "Submitting..." : "Submit Request"}
+          </button>
+        </div>
+        {status ? <p className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--card-soft)] p-3 text-sm">{status}</p> : null}
+        <p className="mt-5 text-sm text-[var(--text-muted)]">
+          Already have an account? <Link href="/auth/login" className="text-[var(--primary-strong)] hover:underline">Login</Link>
+        </p>
+      </section>
     </main>
   );
 }

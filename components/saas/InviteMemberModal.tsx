@@ -27,29 +27,29 @@ export default function InviteMemberModal() {
   }
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
+    <div className="surface p-4">
       <h3 className="mb-3 text-base font-semibold text-[var(--text)]">Invite Member</h3>
       <div className="flex flex-col gap-3 md:flex-row">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm"
+          className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
           placeholder="member@company.com"
         />
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm"
+          className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
         >
           <option value="member">member</option>
           <option value="admin">admin</option>
         </select>
-        <button onClick={onInvite} className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-900">
+        <button onClick={onInvite} className="btn-primary px-4 py-2 text-sm font-medium">
           Send Invite
         </button>
       </div>
-      {status ? <p className="mt-3 text-xs text-[var(--text-muted)]">{status}</p> : null}
+      {status ? <p className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--card-soft)] p-2 text-xs text-[var(--text-muted)]">{status}</p> : null}
     </div>
   );
 }

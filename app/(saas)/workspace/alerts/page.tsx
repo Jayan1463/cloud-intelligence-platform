@@ -12,14 +12,16 @@ export default async function WorkspaceAlertsPage({ searchParams }: AlertsPagePr
   const alerts = getAlertsForProject(params?.projectId);
 
   return (
-    <section className="space-y-4">
-      <h2 className="text-2xl font-semibold">Alerts</h2>
-      <p className="text-sm text-[var(--text-muted)]">
-        Showing {alerts.length} open alerts for {selectedProject.name}
-      </p>
+    <section className="space-y-4 animate-fade">
+      <div className="surface p-5">
+        <h2 className="text-2xl font-semibold">Alerts</h2>
+        <p className="text-sm text-[var(--text-muted)]">
+          Showing {alerts.length} open alerts for {selectedProject.name}
+        </p>
+      </div>
       <div className="space-y-3">
         {alerts.map((alert) => (
-          <div key={alert.id} className="rounded-md border border-[var(--border)] bg-[var(--card)] p-4">
+          <div key={alert.id} className="surface-soft p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">{alert.type}</p>
             <p className="mt-1 text-sm font-medium text-[var(--text)]">{alert.message}</p>
             <p className="mt-1 text-xs text-[var(--text-muted)]">Severity: {alert.severity}</p>

@@ -11,8 +11,11 @@ const metrics = Array.from({ length: 24 }, (_, i) => ({
 
 export default function WorkspaceAnalyticsPage() {
   return (
-    <section className="space-y-4">
-      <h2 className="text-2xl font-semibold">Analytics</h2>
+    <section className="space-y-4 animate-fade">
+      <div className="surface p-5">
+        <h2 className="text-2xl font-semibold">Analytics</h2>
+        <p className="text-sm text-[var(--text-muted)]">Performance trends and workload behavior across key dimensions.</p>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <CPUChart data={metrics} />
         <MemoryChart data={metrics} />

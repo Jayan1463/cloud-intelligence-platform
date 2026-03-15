@@ -21,11 +21,11 @@ export default function ProjectSwitcher() {
     <select
       value={selected}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm text-[var(--text)]"
+      className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm text-[var(--text)]"
       aria-label="Project selector"
     >
       {WORKSPACE_PROJECTS.map((p) => (
-        <option key={p.id} value={p.id} className="bg-slate-900 text-white">
+        <option key={p.id} value={p.id}>
           {p.name}
         </option>
       ))}

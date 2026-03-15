@@ -32,7 +32,7 @@ export default function OrgMemberTable() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--card)]">
+    <div className="surface overflow-hidden">
       {loading ? <p className="p-3 text-sm text-[var(--text-muted)]">Loading members...</p> : null}
       <table className="w-full text-sm">
         <thead className="text-left text-[var(--text-muted)]">
@@ -52,6 +52,11 @@ export default function OrgMemberTable() {
               <td className="p-3">{member.joinedAt ?? "-"}</td>
             </tr>
           ))}
+          {!loading && members.length === 0 ? (
+            <tr className="border-t border-[var(--border)] text-[var(--text-muted)]">
+              <td className="p-3" colSpan={4}>No members found.</td>
+            </tr>
+          ) : null}
         </tbody>
       </table>
     </div>

@@ -1,9 +1,12 @@
 export default function ForgotPasswordPage() {
   return (
-    <main className="mx-auto max-w-md space-y-4 p-8">
-      <h1 className="text-2xl font-semibold">Reset Password</h1>
-      <input className="w-full rounded-md border border-[var(--border)] bg-transparent p-3" placeholder="Email" />
-      <button className="w-full rounded-md bg-cyan-500 p-3 font-medium text-slate-900">Send Reset Link</button>
+    <main className="mx-auto flex min-h-screen w-full max-w-xl items-center px-4 py-8">
+      <section className="surface w-full p-6">
+        <h1 className="text-2xl font-semibold">Reset Password</h1>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">This demo route sends a simulated reset action.</p>
+        <input className="mt-4 w-full rounded-xl border border-[var(--border)] bg-[var(--card-soft)] p-3" placeholder="Email" />
+        <button className="btn-primary mt-3 w-full p-3 text-sm font-semibold">Send Reset Link</button>
+      </section>
     </main>
   );
 }

@@ -8,9 +8,11 @@ const costData = Array.from({ length: 24 }, (_, i) => ({
 
 export default function WorkspaceCostPage() {
   return (
-    <section className="space-y-4">
-      <h2 className="text-2xl font-semibold">Cost Intelligence</h2>
-      <p className="text-[var(--text-muted)]">Project-level spend trends and forecast signals.</p>
+    <section className="space-y-4 animate-fade">
+      <div className="surface p-5">
+        <h2 className="text-2xl font-semibold">Cost Intelligence</h2>
+        <p className="text-[var(--text-muted)]">Project-level spend trends and forecast signals.</p>
+      </div>
       <CostChart data={costData} />
     </section>
   );

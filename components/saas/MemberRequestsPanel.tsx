@@ -48,24 +48,24 @@ export default function MemberRequestsPanel() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
+    <div className="surface p-4">
       <h3 className="mb-3 text-base font-semibold text-[var(--text)]">Pending Member Requests</h3>
       {loading ? <p className="text-sm text-[var(--text-muted)]">Loading requests...</p> : null}
       {!loading && requests.length === 0 ? <p className="text-sm text-[var(--text-muted)]">No pending requests.</p> : null}
       <div className="space-y-2">
         {requests.map((request) => (
-          <div key={request.email} className="flex items-center justify-between rounded-md border border-[var(--border)] p-3 text-sm">
+          <div key={request.email} className="surface-soft flex items-center justify-between p-3 text-sm">
             <div>
               <p className="font-medium text-[var(--text)]">{request.name}</p>
               <p className="text-[var(--text-muted)]">{request.email}</p>
             </div>
-            <button onClick={() => onApprove(request.email)} className="rounded-md bg-cyan-500 px-3 py-2 text-slate-900">
+            <button onClick={() => onApprove(request.email)} className="btn-primary px-3 py-2 text-xs font-semibold uppercase tracking-wide">
               Approve
             </button>
           </div>
         ))}
       </div>
-      {status ? <p className="mt-3 text-xs text-[var(--text-muted)]">{status}</p> : null}
+      {status ? <p className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--card-soft)] p-2 text-xs text-[var(--text-muted)]">{status}</p> : null}
     </div>
   );
 }
