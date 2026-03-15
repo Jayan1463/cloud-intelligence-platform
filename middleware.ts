@@ -10,10 +10,6 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const authenticated = isAdminAuthenticatedRequest(request);
 
-  if (pathname === "/auth/login" && authenticated) {
-    return NextResponse.redirect(new URL("/workspace/dashboard", request.url));
-  }
-
   if (!requiresAdmin(pathname)) {
     return NextResponse.next();
   }
@@ -28,7 +24,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/workspace/:path*",
-    "/auth/login"
+    "/workspace/:path*"
   ]
 };
