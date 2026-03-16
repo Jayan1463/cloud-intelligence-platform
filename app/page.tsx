@@ -5,12 +5,12 @@ export default function Home() {
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-8 md:px-8 md:py-12">
       <section className="surface grid-overlay relative overflow-hidden p-8 md:p-12">
         <div className="relative z-10">
-          <p className="badge">Cloud Intelligence Platform</p>
+          <p className="badge">OpsNexus</p>
           <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight md:text-6xl">
-            Firebase-style SaaS experience for modern cloud operations.
+            Welcome to OpsNexus, your command center for cloud operations.
           </h1>
           <p className="mt-4 max-w-2xl text-base text-[var(--text-muted)]">
-            Monitor infrastructure, control costs, and manage teams from a clean multi-tenant control plane designed for demos and production roadmaps.
+            Monitor infrastructure, optimize spend, and coordinate teams from one unified platform built for modern operations.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link className="btn-primary px-5 py-3 text-sm font-semibold" href="/auth/login">
