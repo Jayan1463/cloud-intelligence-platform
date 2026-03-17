@@ -4,13 +4,8 @@ import { canManageOrganization } from "@/lib/auth/rbac";
 import { ensureOrgAccess } from "@/lib/org/access";
 import { createInviteToken, sendOrganizationInviteEmail } from "@/lib/org/invites";
 import type { AppRole } from "@/types/auth";
-import { isAdminAuthenticated } from "@/lib/auth/admin";
 
 export async function POST(request: Request, { params }: { params: Promise<{ orgId: string }> }) {
-  if (!(await isAdminAuthenticated())) {
-    return NextResponse.json({ error: "Admin login required" }, { status: 401 });
-  }
-
   const session = await getSessionContext();
   const { orgId } = await params;
 
@@ -24,9 +19,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ org
     return NextResponse.json({ error: "Admin role required" }, { status: 403 });
   }
 
-  const body = await request.json();
+  const body = await request.json().catch(() => ({}));
   const email = String(body.email ?? "").trim().toLowerCase();
-  const role: AppRole = body.role === "admin" ? "admin" : "member";
+  const role: AppRole = body.role === "admin" || body.role === "developer" || body.role === "viewer" ? body.role : "viewer";
 
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
@@ -34,6 +29,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ org
 
   const { token, tokenHash } = createInviteToken();
   const inviteId = `inv_${Date.now()}`;
+
   let emailResult: { messageId: string; acceptedAt: string };
 
   try {

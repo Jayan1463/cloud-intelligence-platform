@@ -15,6 +15,7 @@ function requiresAdmin(pathname: string): boolean {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const authenticated = isAuthenticatedRequest(request);
+  const traceId = request.headers.get("x-trace-id") ?? crypto.randomUUID().replace(/-/g, "");
 
   if (pathname.startsWith("/workspace") && !authenticated) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
@@ -27,7 +28,11 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-trace-id", traceId);
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set("x-trace-id", traceId);
+  return response;
 }
 
 export const config = {

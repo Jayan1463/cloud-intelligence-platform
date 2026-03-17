@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionContext } from "@/lib/auth/session";
 import { ensureProjectAccess } from "@/lib/org/access";
+import { getProjectCostIntelligence } from "@/lib/platform/analytics/cost";
 
 export async function GET(_: Request, { params }: { params: Promise<{ projectId: string }> }) {
   const session = await getSessionContext();
@@ -12,13 +13,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ projectId:
     return NextResponse.json({ error: (error as Error).message }, { status: 403 });
   }
 
-  return NextResponse.json({
-    projectId,
-    monthly: [
-      { month: "Jan", amount: 1100 },
-      { month: "Feb", amount: 1250 },
-      { month: "Mar", amount: 1380 }
-    ],
-    forecast: 1520
-  });
+  const cost = await getProjectCostIntelligence(projectId);
+  return NextResponse.json({ projectId, ...cost });
 }

@@ -13,6 +13,7 @@ CartesianGrid
 type Metric = {
 cpu?: number;
 memory?: number;
+disk?: number;
 network?: number;
 };
 
@@ -22,11 +23,13 @@ const chartData = data.map((m,i)=>{
 
 const cpu = m.cpu ?? 0;
 const memory = m.memory ?? 0;
+const disk = m.disk ?? 0;
 const network = m.network ?? 0;
 
 const cost =
 cpu * 0.02 +
-memory * 0.015 +
+memory * 0.01 +
+disk * 0.012 +
 network * 0.01;
 
 return {

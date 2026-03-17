@@ -1,4 +1,8 @@
-export function detectAnomaly(metrics: any[]) {
+type MetricSample = {
+  cpu?: number;
+};
+
+export function detectAnomaly(metrics: MetricSample[]) {
 
   if (!metrics || metrics.length < 10) {
     return false;

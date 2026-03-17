@@ -1,18 +1,20 @@
-export type AlertType = "cpu" | "memory" | "network";
+export type AlertType = "cpu" | "memory" | "disk" | "network" | "server_down";
 
 export type AlertItem = {
   id?: string;
-  projectId: string;
+  projectId?: string;
   type: AlertType;
   severity: "low" | "medium" | "high" | "critical";
   message: string;
-  triggeredAt: string;
+  triggeredAt?: string;
   resolvedAt?: string;
-  status: "open" | "resolved";
+  status?: "open" | "acknowledged" | "resolved";
 };
 
 export type AlertThresholds = {
-  cpu: number;
-  memory: number;
-  networkAnomaly: number;
+  cpuHigh: number;
+  memoryHigh: number;
+  diskHigh: number;
+  networkSpikePct: number;
+  dedupeWindowMinutes: number;
 };

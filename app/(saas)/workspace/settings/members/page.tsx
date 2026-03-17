@@ -11,7 +11,7 @@ export default async function MembersSettingsPage() {
   return (
     <section className="space-y-4 animate-fade">
       <div className="surface p-5">
-        <h2 className="text-2xl font-semibold">Members & Permissions</h2>
+        <h2 className="text-2xl font-semibold">Team Management</h2>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
           Signed in as <span className="font-medium">{session.user?.email ?? "Unknown user"}</span> with role{" "}
           <span className="font-medium">{session.role ?? "none"}</span>.

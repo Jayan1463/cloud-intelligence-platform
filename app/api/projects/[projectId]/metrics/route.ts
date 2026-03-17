@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionContext } from "@/lib/auth/session";
-import { validateMetricPayload } from "@/lib/metrics/ingestion";
 import { ensureProjectAccess } from "@/lib/org/access";
+import { getRecentMetrics } from "@/lib/database/metrics";
 
 export async function GET(_: Request, { params }: { params: Promise<{ projectId: string }> }) {
   const session = await getSessionContext();
@@ -13,35 +13,20 @@ export async function GET(_: Request, { params }: { params: Promise<{ projectId:
     return NextResponse.json({ error: (error as Error).message }, { status: 403 });
   }
 
-  return NextResponse.json({
-    metrics: Array.from({ length: 10 }, (_, i) => ({
-      id: `m_${i}`,
-      projectId,
-      ts: new Date(Date.now() - i * 60000).toISOString(),
-      cpu: 30 + i,
-      memory: 40 + i,
-      networkIn: 12 + i,
-      networkOut: 10 + i
-    }))
-  });
+  const metrics = await getRecentMetrics({ projectId, limit: 300 });
+  return NextResponse.json({ metrics });
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ projectId: string }> }) {
-  const session = await getSessionContext();
   const { projectId } = await params;
+  const body = await request.json().catch(() => ({}));
 
-  try {
-    ensureProjectAccess(session, projectId);
-  } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 403 });
-  }
+  const res = await fetch(new URL("/api/metrics", request.url), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ...body, projectId })
+  });
 
-  const body = await request.json();
-  const payload = { ...body, projectId };
-
-  if (!validateMetricPayload(payload)) {
-    return NextResponse.json({ error: "Invalid metric payload" }, { status: 400 });
-  }
-
-  return NextResponse.json({ metric: { id: `m_${Date.now()}`, ...payload } }, { status: 201 });
+  const payload = await res.json().catch(() => ({}));
+  return NextResponse.json(payload, { status: res.status });
 }

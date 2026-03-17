@@ -1,0 +1,22 @@
+export const COLLECTIONS = {
+  organizations: "organizations",
+  users: "users",
+  projects: "projects",
+  servers: "servers",
+  metrics: "metrics",
+  metricRollups: "metric_rollups",
+  metricQueue: "metric_queue",
+  logs: "logs",
+  alerts: "alerts",
+  incidents: "incidents",
+  deployments: "deployments",
+  auditLogs: "audit_logs",
+  traces: "traces",
+  spans: "spans",
+  apiKeys: "api_keys",
+  rateLimits: "rate_limits",
+  sloDefinitions: "slo_definitions",
+  sloWindows: "slo_windows",
+  syntheticChecks: "synthetic_checks",
+  backgroundJobs: "background_jobs"
+} as const;

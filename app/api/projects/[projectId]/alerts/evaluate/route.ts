@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { evaluateAlerts } from "@/lib/alerts/engine";
 import { getSessionContext } from "@/lib/auth/session";
 import { ensureProjectAccess } from "@/lib/org/access";
+import { evaluateAndDispatchAlerts } from "@/lib/alerts/engine";
 
 export async function POST(request: Request, { params }: { params: Promise<{ projectId: string }> }) {
   const session = await getSessionContext();
@@ -13,10 +13,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ pro
     return NextResponse.json({ error: (error as Error).message }, { status: 403 });
   }
 
-  const body = await request.json();
-  const thresholds = body.thresholds ?? { cpu: 80, memory: 85, networkAnomaly: 160 };
-  const sample = { ...body.sample, projectId };
-  const alerts = evaluateAlerts(sample, thresholds);
+  const body = await request.json().catch(() => ({}));
+  const sample = body.sample ?? {};
+  const serverId = String(sample.serverId ?? body.serverId ?? "").trim();
 
-  return NextResponse.json({ alerts });
+  if (!session.orgId || !serverId) {
+    return NextResponse.json({ error: "org and serverId are required" }, { status: 400 });
+  }
+
+  const result = await evaluateAndDispatchAlerts({
+    organizationId: session.orgId,
+    projectId,
+    serverId,
+    cpu: Number(sample.cpu ?? body.cpu ?? 0),
+    memory: Number(sample.memory ?? body.memory ?? 0),
+    disk: Number(sample.disk ?? body.disk ?? 0),
+    network: Number(sample.network ?? body.network ?? 0),
+    timestamp: String(sample.timestamp ?? body.timestamp ?? new Date().toISOString())
+  });
+
+  return NextResponse.json({ alerts: result.alerts, triggered: result.triggered });
 }

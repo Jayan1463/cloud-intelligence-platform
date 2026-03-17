@@ -14,7 +14,6 @@ type Metric = {
 
 export default function CostPage() {
 
-  const [metrics, setMetrics] = useState<Metric[]>([]);
   const [predictedCost, setPredictedCost] = useState(0);
 
   useEffect(() => {
@@ -24,8 +23,6 @@ export default function CostPage() {
       (snapshot) => {
 
         const data = snapshot.docs.map(doc => doc.data() as Metric);
-        setMetrics(data);
-
         const cost = predictCost(data);
         setPredictedCost(cost);
 

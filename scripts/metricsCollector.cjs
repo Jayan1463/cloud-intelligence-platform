@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const si = require("systeminformation");
 const { initializeApp } = require("firebase/app");
 const { 
@@ -7,7 +8,6 @@ const {
   query,
   orderBy,
   getDocs,
-  limit,
   deleteDoc,
   doc
 } = require("firebase/firestore");

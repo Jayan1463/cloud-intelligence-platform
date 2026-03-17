@@ -44,7 +44,8 @@ export default function MemberRequestsPanel() {
   }
 
   useEffect(() => {
-    void loadRequests();
+    const timer = setTimeout(() => void loadRequests(), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

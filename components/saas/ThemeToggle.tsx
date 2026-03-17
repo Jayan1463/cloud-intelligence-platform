@@ -5,19 +5,26 @@ import { useEffect, useState } from "react";
 type Theme = "light" | "dark";
 
 function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-  const stored = window.localStorage.getItem("theme");
-  return stored === "dark" ? "dark" : "light";
+  return "light";
 }
 
 export default function SaaSThemeToggle() {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const stored = window.localStorage.getItem("theme");
+    const nextTheme: Theme = stored === "dark" ? "dark" : "light";
+    setTheme(nextTheme);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const isDark = theme === "dark";
     document.documentElement.classList.toggle("dark", isDark);
     window.localStorage.setItem("theme", theme);
-  }, [theme]);
+  }, [mounted, theme]);
 
   return (
     <button
@@ -25,7 +32,7 @@ export default function SaaSThemeToggle() {
       onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
       className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm text-[var(--text)]"
     >
-      {theme === "dark" ? "Light Mode" : "Dark Mode"}
+      {mounted ? (theme === "dark" ? "Light Mode" : "Dark Mode") : "Theme"}
     </button>
   );
 }

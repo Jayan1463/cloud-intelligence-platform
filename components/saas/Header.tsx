@@ -22,11 +22,11 @@ export default async function SaaSHeader() {
           <h1 className="text-xl font-semibold text-[var(--text)]">{organization.name}</h1>
           <p className="text-sm text-[var(--text-muted)]">{organization.description}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <SaaSThemeToggle />
           <Suspense
             fallback={
-              <div className="btn-secondary px-3 py-2 text-sm text-[var(--text-muted)]">
+              <div className="btn-secondary min-w-[170px] px-3 py-2 text-sm text-[var(--text-muted)]">
                 Loading projects...
               </div>
             }

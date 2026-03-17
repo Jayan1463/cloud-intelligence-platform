@@ -4,52 +4,63 @@ import { useState } from "react";
 
 export default function InviteMemberModal() {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("member");
-  const [status, setStatus] = useState<string>("");
+  const [role, setRole] = useState("developer");
+  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
 
-  async function onInvite() {
-    setStatus("Sending invite...");
-    const response = await fetch("/api/organizations/demo-org/invites", {
+  async function onInvite(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("saving");
+    setMessage("");
+
+    const response = await fetch("/api/organization/invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, role })
     });
 
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      setStatus(payload.error ?? "Failed to send invite");
+      setStatus("error");
+      setMessage(payload.error ?? "Failed to send invite");
       return;
     }
 
-    const deliveryInfo = payload.messageId ? ` (message: ${payload.messageId})` : "";
-    setStatus(`Invite sent to ${email}${deliveryInfo}`);
+    setStatus("success");
+    setMessage("Invite sent successfully");
     setEmail("");
+    window.dispatchEvent(new Event("org-members-refresh"));
   }
 
   return (
-    <div className="surface p-4">
-      <h3 className="mb-3 text-base font-semibold text-[var(--text)]">Invite Member</h3>
-      <div className="flex flex-col gap-3 md:flex-row">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
-          placeholder="member@company.com"
-        />
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="rounded-xl border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
-        >
-          <option value="member">member</option>
-          <option value="admin">admin</option>
-        </select>
-        <button onClick={onInvite} className="btn-primary px-4 py-2 text-sm font-medium">
-          Send Invite
-        </button>
-      </div>
-      {status ? <p className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--card-soft)] p-2 text-xs text-[var(--text-muted)]">{status}</p> : null}
-    </div>
+    <form onSubmit={onInvite} className="surface-soft p-4 space-y-3">
+      <h3 className="text-sm font-semibold">Invite team member</h3>
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        type="email"
+        required
+        placeholder="teammate@company.com"
+        className="w-full rounded-lg border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
+      />
+      <select
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+        className="w-full rounded-lg border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
+      >
+        <option value="viewer">viewer</option>
+        <option value="developer">developer</option>
+        <option value="admin">admin</option>
+      </select>
+      <button
+        type="submit"
+        disabled={status === "saving"}
+        className="rounded-lg border border-[var(--border)] bg-[var(--card-soft)] px-3 py-2 text-sm"
+      >
+        {status === "saving" ? "Sending..." : "Send invite"}
+      </button>
+      {message ? <p className="text-xs text-[var(--text-muted)]">{message}</p> : null}
+    </form>
   );
 }

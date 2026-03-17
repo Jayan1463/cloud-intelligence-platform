@@ -1,223 +1,102 @@
 # Cloud Intelligence Platform
 
-A modern, Firebase-style SaaS control plane for cloud operations teams.
+Production-grade multi-tenant cloud observability SaaS built on Next.js + Firebase/Firestore.
 
-This project demonstrates how a multi-tenant cloud ops product can combine:
-- project-scoped observability
-- alerts and incident triage
-- cost visibility
-- role-based access control
-- organization and member management
+## Architecture
 
-Built with Next.js App Router, React 19, and TypeScript.
+Frontend (Next.js UI) -> API Routes (Gateway) -> Services (auth/RBAC/alerts/incidents/logs/deployments/audit) -> Metrics Queue/Processor -> Firestore -> Analytics/Cost/Health -> Notifications (Email/Slack/Webhooks)
 
-## Live Demo
+## Implemented Features
 
-- App URL: `https://cloud-intelligence-platform-sigma.vercel.app`
-- Login page: `https://cloud-intelligence-platform-sigma.vercel.app/auth/login`
+- Multi-tenant organizations with strict org scoping
+- Roles: `admin`, `developer`, `viewer`
+- Production auth: signup/login, bcrypt password hashing, JWT session cookies
+- Projects + servers + agent key provisioning
+- Monitoring agent ingestion every 10-15s (`/api/metrics`)
+- Metrics queue + processor persistence pipeline
+- Real-time dashboards via polling existing metrics APIs
+- Alert engine with rule-based checks + incident auto-creation
+- Log ingestion + search/filter API (`/api/logs`)
+- Dynamic infrastructure topology API (`/api/projects/[projectId]/topology`)
+- Cost intelligence (compute/storage/network + trends)
+- Deployment tracking (`/api/deployments`)
+- Audit logs (`/api/audit`)
+- Public status page (`/status/[org]`, `/api/status/[org]`)
+- Versioned API access:
+  - `GET /api/v1/projects`
+  - `GET /api/v1/metrics`
+  - `GET /api/v1/logs`
+  - `GET/POST /api/v1/alerts`
+- Retention policy job utilities (`lib/platform/retention/jobs.ts`)
+- Auto-discovery simulation (`/api/discovery`)
+- Analytics/anomaly/performance insights (`lib/platform/analytics/*`)
+- Unified notification service (`lib/platform/notifications/service.ts`)
 
-Demo credentials:
-- Admin: `admin@test.com` / `123456`
-- Member: `member@test.com` / `123456`
+## Setup
 
-## What The Product Includes
+1. Install dependencies:
 
-### 1) Public Experience
-- Landing page (`/`) with product narrative and CTAs.
-- Public showcase page (`/showcase`) for no-login feature walkthrough.
-
-### 2) Auth & Access
-- Login/signup flow with member request approval.
-- Role cookies for session context (`admin` / `member`).
-- Route-level workspace protection with middleware.
-- Admin-only protection for organization settings sections.
-
-### 3) Workspace Modules
-- Dashboard: KPI snapshot + action center.
-- Projects: project list and context switching.
-- Infrastructure: topology map and compute-health view.
-- Alerts: project-scoped alert stream.
-- Analytics/Cost: chart-based operational and spending insights.
-- Security Center: posture-style operational checks.
-- Solution Showcase: in-workspace presentation route.
-
-### 4) Organization Administration
-- Organization settings pages (profile, plan, security, integrations, danger zone).
-- Editable organization profile with saved values reflected in:
-  - workspace header
-  - organization settings summary
-  - profile editor metadata
-- Members & permissions panel:
-  - invite sending
-  - member request approvals
-  - role-aware actions
-
-### 5) Notification Integrations
-- Email notification API with log-mode fallback.
-- Slack webhook notification endpoint.
-- Resend webhook endpoint stub for event handling.
-
-## Architecture Overview
-
-### App Structure
-- `app/(auth)` -> public auth routes
-- `app/(saas)/workspace` -> authenticated SaaS workspace
-- `app/api` -> route handlers for auth, org, project, notifications, webhooks
-- `components/saas` -> reusable product UI blocks
-- `lib/*` -> business logic helpers (auth, org, alerts, metrics)
-
-### Data Model (Current State)
-This project is demo-first and currently uses a mix of:
-- static demo datasets (`lib/workspace/data.ts`)
-- cookie-backed state for auth/member/org profile flows
-- API handlers returning simulated or demo data
-
-This makes the app easy to run and evaluate without provisioning cloud backends.
-
-## Auth & Role Behavior
-
-- Unauthenticated users are redirected away from `/workspace/*`.
-- Admin-only sections under workspace settings are guarded in middleware.
-- Session role/email are read from secure HTTP-only cookies.
-- Member onboarding supports pending requests and admin approval flow.
-
-## Key API Routes
-
-Auth:
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `POST /api/auth/signup`
-- `GET /api/auth/profile`
-- `GET /api/auth/member-requests`
-- `POST /api/auth/member-requests/approve`
-
-Organizations:
-- `GET/PATCH /api/organizations/[orgId]`
-- `GET/PATCH /api/organizations/[orgId]/members`
-- `POST /api/organizations/[orgId]/invites`
-
-Projects:
-- `GET /api/projects`
-- `GET /api/projects/[projectId]`
-- `GET /api/projects/[projectId]/metrics`
-- `GET /api/projects/[projectId]/cost`
-- `GET /api/projects/[projectId]/topology`
-- `GET /api/projects/[projectId]/alerts`
-- `POST /api/projects/[projectId]/alerts/evaluate`
-
-Notifications & Webhooks:
-- `POST /api/notifications/email`
-- `POST /api/notifications/slack`
-- `POST /api/webhooks/resend`
-
-## Tech Stack
-
-Core:
-- Next.js 16 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS
-
-Visualization:
-- Recharts
-- React Flow
-- Three.js / React Three Fiber / Drei (available in dependency stack)
-
-Integrations:
-- Firebase SDK clients (configured hooks exist)
-- Resend (email)
-- Slack webhooks
-
-## Local Development
-
-### Prerequisites
-- Node.js 20+
-- npm
-
-### Install
 ```bash
 npm install
 ```
 
-### Run Dev Server
+2. Configure env:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Run app:
+
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+## Firebase Requirements
 
-### Build
+- Create Firestore database in native mode
+- Add credentials via env (`FIREBASE_*`) or `GOOGLE_APPLICATION_CREDENTIALS`
+- Configure recommended indexes from `firebase/schema.md`
+
+## Agent
+
+Directory: `agent/`
+
+1. Install agent deps:
+
 ```bash
-npm run build
-npm run start
+cd agent
+pip install -r requirements.txt
 ```
 
-## Environment Variables
-
-Create `.env.local` and define what you need for your target flow.
+2. Run agent (recommended: with `AGENT_KEY`):
 
 ```bash
-# App URL
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Firebase client (optional in current demo flows)
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
-
-# Email delivery
-EMAIL_DELIVERY_MODE=log
-RESEND_API_KEY=
-ALERT_FROM_EMAIL=
-
-# Webhooks / notifications
-RESEND_WEBHOOK_SECRET=
-SLACK_WEBHOOK_URL=
-NEXT_PUBLIC_ALERT_WEBHOOK=
+AGENT_KEY=<server_agent_key> METRICS_API_URL=http://localhost:3000/api/metrics LOGS_API_URL=http://localhost:3000/api/logs AGENT_INTERVAL_SECONDS=15 python agent.py
 ```
 
-Notes:
-- `EMAIL_DELIVERY_MODE=log` is recommended for local testing.
-- If `RESEND_API_KEY` is missing, email routes can run in simulated mode.
-
-## Scripts
-
-- `npm run dev` -> start development server
-- `npm run build` -> production build
-- `npm run start` -> run production server
-- `npm run lint` -> run eslint checks
+Legacy mode also works with `PROJECT_ID` and `SERVER_ID`.
 
 ## Deployment
 
-Recommended: Vercel.
+### Vercel (Frontend + API)
 
-Basic flow:
-1. Push repository to GitHub.
-2. Import project in Vercel.
-3. Configure environment variables.
-4. Deploy.
+1. Import repo in Vercel.
+2. Set all env vars from `.env.example`.
+3. Deploy.
+4. Set `NEXT_PUBLIC_BASE_URL` to your production URL.
 
-## Known Limitations (Current Demo Scope)
+### Backend/Worker jobs
 
-- Several workspace metrics/alerts are demo-generated.
-- State is partially cookie-based rather than fully persisted DB-backed tenancy.
-- Some lint issues exist in legacy files unrelated to core demo flows.
+- Current pipeline processes queue inline for simplicity and reliability.
+- For scale, schedule these jobs using Cloud Run/Cron:
+  - metric queue drain (`processMetricQueue`)
+  - retention pruning (`applyRetentionPolicies`)
+  - periodic alert/server-down checks
 
-## Roadmap
+## Production Notes
 
-- Persist org/project/member state in Firestore or Postgres
-- Real cloud provider ingestion (AWS/GCP/Azure APIs)
-- Stronger RBAC + audit log trail
-- SSO/SAML integration
-- Incident timeline + runbook automation
-
----
-
-If you use this project in your portfolio, include screenshots of:
-- dashboard
-- infrastructure topology
-- organization profile editor
-- member approval workflow
+- Rotate `AUTH_JWT_SECRET`, agent keys, and Firebase service credentials.
+- Add rate limiting + WAF in front of API routes.
+- Add Firestore security rules and IAM-restricted server credentials.
+- Add external queue (Pub/Sub/SQS/Kafka) for very high ingest throughput.

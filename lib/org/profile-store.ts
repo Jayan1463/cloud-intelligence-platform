@@ -19,17 +19,17 @@ const DEFAULT_ORG_KEY = "demo-org";
 
 const DEFAULT_PROFILE: OrganizationProfile = {
   id: "org_acme_ops_001",
-  name: "Acme Cloud Ops",
-  slug: "acme-cloud-ops",
+  name: "QuantumOps",
+  slug: "quantumops",
   ownerUid: "u_1",
   plan: "pro",
   createdAt: "2026-03-01T00:00:00.000Z",
   updatedAt: "2026-03-01T00:00:00.000Z",
   description: "Unified observability, infrastructure control, and cost governance.",
-  primaryEmail: "admin@acmeops.example",
-  website: "acmeops.example",
+  primaryEmail: "admin@quantumops.example",
+  website: "quantumops.example",
   region: "ap-northeast-1",
-  ownerEmail: "admin@acmeops.example",
+  ownerEmail: "admin@quantumops.example",
   environment: "Production",
   timezone: "Asia/Kolkata",
   complianceTag: "SOC2-Ready"
@@ -93,8 +93,8 @@ function buildFallbackProfile(orgKey: string): OrganizationProfile {
   return {
     ...DEFAULT_PROFILE,
     id: orgKey,
-    name: "Cloud Organization",
-    slug: sanitizeSlug(orgKey, "cloud-organization")
+    name: "QuantumOps",
+    slug: sanitizeSlug(orgKey, "quantumops")
   };
 }
 
@@ -104,7 +104,8 @@ function sanitizeProfile(value: unknown, fallback: OrganizationProfile): Organiz
   }
 
   const candidate = value as Partial<OrganizationProfile>;
-  const name = sanitizeText(candidate.name, fallback.name, 80);
+  const rawName = sanitizeText(candidate.name, fallback.name, 80);
+  const name = rawName === "Cloud Organization" || rawName === "Acme Cloud Ops" ? "QuantumOps" : rawName;
 
   return {
     id: sanitizeText(candidate.id, fallback.id, 120),
